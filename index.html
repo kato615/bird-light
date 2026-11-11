@@ -2484,42 +2484,6 @@ glow.style.transform = 'translate3d(calc(' + x + 'px - 50%), calc(' + y + 'px - 
       glowTimer = setTimeout(function () { glow.style.transition = 'opacity 0.9s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.3, 1)'; glow.style.opacity = '1'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; }, 80);
     });
 
-    // 2. 手机端触摸跟手事件
-    var isTouchMoving = false;
-    
-    dropdown.addEventListener('touchstart', function (e) {
-      isTouchMoving = true;
-      var touch = e.touches[0];
-      var r = dropdown.getBoundingClientRect();
-      glow.style.transition = 'none'; // 刚触摸时不要过渡，立刻跟上
-      glow.style.left = (touch.clientX - r.left) + 'px';
-      glow.style.top = (touch.clientY - r.top) + 'px';
-      glow.style.opacity = '1';
-      glow.style.transform = 'translate(-50%, -50%) scale(1)';
-    }, { passive: true });
-
-    dropdown.addEventListener('touchmove', function (e) {
-      if (!isTouchMoving) return;
-      var touch = e.touches[0];
-      var r = dropdown.getBoundingClientRect();
-      glow.style.transition = 'none'; // 移动时不要过渡，丝滑跟手
-      glow.style.left = (touch.clientX - r.left) + 'px';
-      glow.style.top = (touch.clientY - r.top) + 'px';
-    }, { passive: true });
-
-    dropdown.addEventListener('touchend', function () {
-      isTouchMoving = false;
-      glow.style.transition = 'opacity 0.3s ease';
-      glow.style.opacity = '0';
-      
-      // 关键修复：等透明度动画结束后，把光效扔到看不见的左上角，彻底防止它卡在按钮上
-      setTimeout(function() {
-        glow.style.transition = 'none';
-        glow.style.left = '0px';
-        glow.style.top = '0px';
-      }, 300);
-    }, { passive: true });
-
     // 3. 关键修复：只要点击了 dropdown 里的任何按钮，光效立刻原地消失
     dropdown.addEventListener('click', function (e) {
       if (e.target.closest('button')) {
