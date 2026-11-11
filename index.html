@@ -1817,6 +1817,37 @@ body[data-theme="light"] .dropdown {
     scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
   }
 
+  /* ===== 手机端分享弹窗适配 ===== */
+  @media (max-width: 768px) {
+    .share-main {
+      gap: 12px !important;
+      padding: 12px 16px !important;
+    }
+    .share-preview-wrap {
+      height: 60vh !important; /* 从 65vh 缩小，给底部留出空间 */
+    }
+    .share-dock {
+      padding: 0 12px !important;
+      gap: 4px !important;
+    }
+    .ratio-text {
+      padding: 6px 8px !important;
+      font-size: 13px !important;
+    }
+    .dock-group {
+      gap: 4px !important;
+    }
+    .share-bottom-area {
+      gap: 8px !important;
+    }
+    .share-round-btn {
+      width: 38px !important;
+      height: 38px !important;
+    }
+    .dock-divider { margin: 0 8px !important; }
+    .theme-dot { width: 10px !important; height: 10px !important; }
+  }
+
 </style>
 </head>
 <body data-theme="pink">
@@ -2424,6 +2455,7 @@ function calcFontSize(text) {
     autoSwitchEnabled = savedAuto === null ? true : savedAuto === '1';
     var savedTime = localStorage.getItem(AUTO_SWITCH_TIME_KEY);
     if (savedTime) autoSwitchInterval = parseInt(savedTime, 10);
+    else autoSwitchInterval = 30000; // 👈 强制默认 30 秒
     updateAutoSwitchUI();
     if (autoSwitchEnabled) startAutoSwitch();
   }
@@ -2431,6 +2463,8 @@ function calcFontSize(text) {
   // === 光标光晕 ===
   function bindCursorGlow() {
     var dropdown = $('dropdown'), glow = $('cursorGlow'), glowTimer = null;
+    
+    // 电脑端鼠标事件
     dropdown.addEventListener('mousemove', function (e) {
       var r = dropdown.getBoundingClientRect();
       glow.style.left = (e.clientX - r.left) + 'px'; glow.style.top = (e.clientY - r.top) + 'px';
@@ -2441,7 +2475,37 @@ function calcFontSize(text) {
       clearTimeout(glowTimer); glow.style.transition = 'opacity 0.06s ease, transform 0.06s ease'; glow.style.opacity = '0'; glow.style.transform = 'translate(-50%, -50%) scale(0.1)';
       glowTimer = setTimeout(function () { glow.style.transition = 'opacity 0.9s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.3, 1)'; glow.style.opacity = '1'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; }, 80);
     });
+
+    // 手机端触摸跟手事件（新增）
+    var isTouchMoving = false;
+    dropdown.addEventListener('touchstart', function (e) {
+      isTouchMoving = true;
+      var touch = e.touches[0];
+      var r = dropdown.getBoundingClientRect();
+      glow.style.transition = 'transform 0.2s ease, opacity 0.2s ease'; // 取消之前鼠标的过渡，防卡顿
+      glow.style.left = (touch.clientX - r.left) + 'px';
+      glow.style.top = (touch.clientY - r.top) + 'px';
+      glow.style.opacity = '1';
+      glow.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, { passive: true });
+
+    dropdown.addEventListener('touchmove', function (e) {
+      if (!isTouchMoving) return;
+      var touch = e.touches[0];
+      var r = dropdown.getBoundingClientRect();
+      glow.style.transition = 'opacity 0.2s ease'; // 移动时平滑跟随
+      glow.style.left = (touch.clientX - r.left) + 'px';
+      glow.style.top = (touch.clientY - r.top) + 'px';
+    }, { passive: true });
+
+    dropdown.addEventListener('touchend', function () {
+      isTouchMoving = false;
+      glow.style.transition = 'opacity 0.4s ease';
+      glow.style.opacity = '0';
+      setTimeout(function() { glow.style.transition = ''; }, 400);
+    }, { passive: true });
   }
+
 
   function bindThemeToggle() {
     var toggle = $('menuAppearanceToggle'), panel = $('appearancePanel');
