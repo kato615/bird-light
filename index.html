@@ -798,7 +798,6 @@
 
   /* 2. 卡片与弹窗白底 */
   body[data-theme="light"] .dropdown,
-  body[data-theme="light"] .modal-content,
   body[data-theme="light"] .quote-item,
   body[data-theme="light"] .book-modal-content,
   body[data-theme="light"] .book-modal-left,
@@ -811,6 +810,13 @@
   body[data-theme="light"] .book-card {
     background: rgba(252, 252, 250, 0.65) !important;
     border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* 晨雾模式：添加/编辑句子弹窗改为纯白不透明 */
+  body[data-theme="light"] .modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
   }
   body[data-theme="light"] .book-card { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04); }
   body[data-theme="light"] .book-card:hover { background: #ffffff !important; border-color: rgba(0, 0, 0, 0.15) !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); }
@@ -3431,8 +3437,8 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     }
 
     // 绘制极简纯文字水印
-    ctx.fillStyle = shareTheme === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)';
-    ctx.font = '300 ' + (minSide * 0.016) + 'px -apple-system, sans-serif';
+    ctx.fillStyle = shareTheme === 'light' ? 'rgba(0,0,0,0.32)' : 'rgba(255,255,255,0.2)';
+    ctx.font = (shareTheme === 'light' ? '400 ' : '300 ') + (minSide * 0.016) + 'px -apple-system, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('鸟   与   光', w / 2, h - (h * 0.07));
   }
