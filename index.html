@@ -1853,6 +1853,19 @@ body[data-theme="light"] .dropdown {
     animation-play-state: paused !important;
   }
 
+/* 手机端：菜单按钮滑动经过时不触发按压高亮 */
+@media (hover: none) and (pointer: coarse) {
+  .dropdown button:active {
+    background: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .dropdown button:hover {
+    background: transparent !important;
+    color: inherit !important;
+  }
+}
+
 </style>
 </head>
 <body data-theme="pink">
