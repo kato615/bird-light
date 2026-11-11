@@ -160,7 +160,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-  .cursor-glow { position: absolute; width: 120px; height: 120px; left: 0; top: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 35%), radial-gradient(circle, rgba(var(--accent-rgb), 0.20) 0%, rgba(var(--accent-rgb), 0.09) 30%, rgba(var(--accent-rgb), 0.03) 60%, transparent 80%); pointer-events: none; transform: translate(-50%, -50%) scale(1); opacity: 0; transition: opacity 0.25s ease, transform 0.25s ease; filter: blur(4px); z-index: 0; }
   .dropdown button { display: block; width: 100%; text-align: left; padding: 12px 16px; background: transparent; border-radius: 8px; font-size: 15px; flex: none; position: relative; z-index: 1; transition: background 0.2s, color 0.2s, transform 0.12s ease; }
   .dropdown button:hover { background: rgba(255,255,255,0.08); color: #fff; }
   .dropdown button:active { background: rgba(255,255,255,0.18); transform: scale(0.97); }
@@ -1893,7 +1892,6 @@ body[data-theme="light"] .dropdown {
     <span></span><span></span><span></span>
   </button>
   <div class="dropdown" id="dropdown">
-    <div class="cursor-glow" id="cursorGlow"></div>
     <button id="menuAdd">添加句子</button>
     <button id="menuGoList">列表/标签</button>
     <button id="menuGoShelf">我的书架</button>
@@ -2476,39 +2474,6 @@ function calcFontSize(text) {
     else autoSwitchInterval = 30000; // 👈 强制默认 30 秒
     updateAutoSwitchUI();
     if (autoSwitchEnabled) startAutoSwitch();
-  }
-
-  // === 光标光晕 ===
-  function bindCursorGlow() {
-    var dropdown = $('dropdown'), glow = $('cursorGlow'), glowTimer = null;
-    
-    // 1. 电脑端鼠标事件
-    dropdown.addEventListener('mousemove', function (e) {
-      var r = dropdown.getBoundingClientRect();
-      var x = e.clientX - r.left;
-      var y = e.clientY - r.top;
-    // 基础偏移是 -50%, -50%
-glow.style.transform = 'translate3d(calc(' + x + 'px - 50%), calc(' + y + 'px - 50%), 0) scale(1)';
-    });
-    dropdown.addEventListener('mouseenter', function () { glow.style.transition = ''; glow.style.transform = 'translate(-50%, -50%) scale(1)'; glow.style.opacity = '1'; });
-    dropdown.addEventListener('mouseleave', function () { clearTimeout(glowTimer); glow.style.transition = ''; glow.style.opacity = '0'; });
-    dropdown.addEventListener('mousedown', function () {
-      clearTimeout(glowTimer); glow.style.transition = 'opacity 0.06s ease, transform 0.06s ease'; glow.style.opacity = '0'; glow.style.transform = 'translate(-50%, -50%) scale(0.1)';
-      glowTimer = setTimeout(function () { glow.style.transition = 'opacity 0.9s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.3, 1)'; glow.style.opacity = '1'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; }, 80);
-    });
-
-    // 3. 关键修复：只要点击了 dropdown 里的任何按钮，光效立刻原地消失
-    dropdown.addEventListener('click', function (e) {
-      if (e.target.closest('button')) {
-        glow.style.transition = 'opacity 0.15s ease';
-        glow.style.opacity = '0';
-        setTimeout(function() {
-          glow.style.transition = 'none';
-          glow.style.left = '0px';
-          glow.style.top = '0px';
-        }, 150);
-      }
-    });
   }
 
   function bindThemeToggle() {
@@ -4127,7 +4092,6 @@ document.documentElement.style.setProperty('--quote-size', calcFontSize('') + 'p
     bindShelfEvents();
     bindPresetTags();
     bindTagFilter();
-    bindCursorGlow();
     bindThemeToggle();
     bindLongPress();
     bindListCopy();
