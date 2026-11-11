@@ -1848,6 +1848,11 @@ body[data-theme="light"] .dropdown {
     .theme-dot { width: 10px !important; height: 10px !important; }
   }
 
+  /* 当菜单打开时，暂停背景光团的动画，节省 GPU 算力 */
+  body.menu-open .liquid-bg span {
+    animation-play-state: paused !important;
+  }
+
 </style>
 </head>
 <body data-theme="pink">
@@ -2467,7 +2472,10 @@ function calcFontSize(text) {
     // 1. 电脑端鼠标事件
     dropdown.addEventListener('mousemove', function (e) {
       var r = dropdown.getBoundingClientRect();
-      glow.style.left = (e.clientX - r.left) + 'px'; glow.style.top = (e.clientY - r.top) + 'px';
+      var x = e.clientX - r.left;
+      var y = e.clientY - r.top;
+    // 基础偏移是 -50%, -50%
+glow.style.transform = 'translate3d(calc(' + x + 'px - 50%), calc(' + y + 'px - 50%), 0) scale(1)';
     });
     dropdown.addEventListener('mouseenter', function () { glow.style.transition = ''; glow.style.transform = 'translate(-50%, -50%) scale(1)'; glow.style.opacity = '1'; });
     dropdown.addEventListener('mouseleave', function () { clearTimeout(glowTimer); glow.style.transition = ''; glow.style.opacity = '0'; });
@@ -3006,7 +3014,13 @@ if (direction === 'forward' && (id === 'list' || id === 'shelf')) {
     }, 280);
   }
 
-  function closeDropdown() { $('dropdown').classList.remove('active'); $('appearancePanel').classList.remove('open'); $('menuAppearanceToggle').classList.remove('open'); }
+  function closeDropdown() { 
+    $('dropdown').classList.remove('active'); 
+    $('appearancePanel').classList.remove('open'); 
+    $('menuAppearanceToggle').classList.remove('open'); 
+    document.body.classList.remove('menu-open'); 
+  }
+
   function closeFab() { var fab = $('fab'), toggle = $('fabToggle'); if (!fab) return; fab.classList.remove('open'); if (toggle) toggle.textContent = '⋯'; }
 
   function openModal(quote, lockSource) {
@@ -3579,8 +3593,12 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     }
   }
 
-  function bindEvents() {
-    $('btnMenu').addEventListener('click', function (e) { e.stopPropagation(); $('dropdown').classList.toggle('active'); });
+   function bindEvents() {
+    $('btnMenu').addEventListener('click', function (e) { 
+      e.stopPropagation(); 
+      var isOpen = $('dropdown').classList.toggle('active'); // 👈 在这里定义 isOpen
+      document.body.classList.toggle('menu-open', isOpen); 
+    });
     document.addEventListener('click', function (e) { var dd = $('dropdown'); if (!dd.classList.contains('active')) return; if (dd.contains(e.target)) return; closeDropdown(); });
 
     $('menuAdd').addEventListener('click', function () { closeDropdown(); openModal(null); });
