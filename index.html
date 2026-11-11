@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a1a">
 <title>鸟与光</title>
 <meta name="color-scheme" content="only light">
@@ -27,6 +27,7 @@
     min-height: 100vh; display: flex; flex-direction: column;
     user-select: none; position: relative; overflow-x: hidden;
     height: 100vh; height: 100dvh; overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
     transition: background 0.5s ease, color 0.5s ease;
   }
   
