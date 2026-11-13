@@ -2063,17 +2063,24 @@ body[data-theme="light"] .tb-icon-btn:hover { color: #000; background: rgba(0,0,
   opacity: 0;
 }
 
-/* ===== 通用返回按钮 ===== */
+/* ===== 通用返回按钮（通栏流式，绝对能点） ===== */
 .tb-drawer-back {
-  width: 32px; height: 32px;
-  border-radius: 10px; 
-  background: transparent; border: none;
+  display: flex;
+  width: 100%; 
+  height: 44px;
+  border-radius: 8px; 
+  background: transparent; 
+  border: none;
   color: #bbb;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0; cursor: pointer;
-  margin: 4px 8px;
-  font-size: 24px; line-height: 1;
+  align-items: center; 
+  justify-content: flex-start; 
+  padding: 0 16px; 
+  cursor: pointer;
+  margin: 0 0 12px 0; /* 👈 关键：底部留出 12px 间距，绝不会和下面文字黏在一起 */
+  font-size: 20px; 
+  line-height: 1;
   transition: background 0.2s, color 0.2s;
+  pointer-events: auto !important;
 }
 .tb-drawer-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
 body[data-theme="light"] .tb-drawer-back { color: #555; }
@@ -2238,61 +2245,26 @@ body[data-theme="light"] .dropdown-page > button:not(.dropdown-toggle-item):not(
 /* 书架页搜索下拉调整定位 */
 .global-search-results { top: 80px !important; }
 
-/* ===== 修复二级面板（外观）的排版 ===== */
-
-/* 1. 给整个面板顶部留出空间，避免和返回键重叠 */
-.dropdown-page[data-page="appearance"] {
-  padding-top: 36px; 
-}
-
-/* 2. 把返回按钮变成左上角的精致小按钮，绝对定位 */
-.dropdown-page .tb-drawer-back {
-  position: absolute;
-  top: 6px;
-  left: 8px;
-  width: 30px;
-  height: 30px;
-  flex: none; /* 防止被拉伸 */
-  padding: 0;
-  margin: 0;
-  background: transparent; 
-  border-radius: 8px;
-  color: #aaa;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  border: none;
-  transition: background 0.2s, color 0.2s;
-}
-.dropdown-page .tb-drawer-back:hover {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-
-/* 3. 恢复“显示模式”和“主题”的左对齐和小字体 */
+/* ===== 恢复外观面板的文字排版 ===== */
 .dropdown-page .sub-label {
   font-size: 12px !important;
   color: #777 !important;
-  padding: 8px 16px 4px 16px !important;
+  padding: 12px 16px 4px 16px !important; /* 增加顶部内边距，防止和上面黏连 */
   text-align: left !important;
   font-weight: normal !important;
 }
 
-/* 4. 修复主题按钮的排版，去除过大留白，和标题对齐 */
 .dropdown-page .theme-btn {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   text-align: left;
-  padding: 10px 16px !important; 
+  padding: 12px 16px !important; 
   background: transparent;
   border-radius: 8px;
   font-size: 14px;
   color: #bbb;
-  flex: none;
   border: none;
   transition: background 0.2s;
 }
@@ -2305,9 +2277,7 @@ body[data-theme="light"] .dropdown-page > button:not(.dropdown-toggle-item):not(
   margin-left: 8px;
 }
 
-/* 5. 晨雾模式下的颜色适配 */
-body[data-theme="light"] .dropdown-page .tb-drawer-back { color: #555; }
-body[data-theme="light"] .dropdown-page .tb-drawer-back:hover { background: rgba(0,0,0,0.05); color: #000; }
+/* 晨雾模式文字颜色适配 */
 body[data-theme="light"] .dropdown-page .sub-label { color: #888 !important; }
 body[data-theme="light"] .dropdown-page .theme-btn { color: #333; }
 body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,0,0.06); }
@@ -2354,7 +2324,7 @@ body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,
       </div>
       
       <!-- 主页菜单二级面板：外观 -->
-      <div class="dropdown-page" data-page="appearance">
+        <div class="dropdown-page" data-page="appearance" style="padding-top: 4px;">
         <button class="tb-drawer-back" data-action="back" aria-label="返回">‹</button>
         <div class="sub-label">显示模式</div>
         <div style="display: flex; gap: 8px; padding: 0 16px 10px 28px;">
@@ -3526,6 +3496,16 @@ if (!q) {
       e.stopPropagation();
       switchPage('dropdownInner', 'appearance', false);
     });
+
+    // 【终极修复】：直接给主页的返回按钮绑定事件
+    var homeBackBtn = document.querySelector('.dropdown-page[data-page="appearance"] .tb-drawer-back');
+    if (homeBackBtn) {
+      homeBackBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        switchPage('dropdownInner', 'main', true);
+      });
+    }
 
     $('btnListSearch').addEventListener('click', function() { enterListSearch(); });
     $('btnListSearchCancel').addEventListener('click', function() { exitListSearch(); });
