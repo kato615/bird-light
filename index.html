@@ -3542,7 +3542,7 @@ if (!q) {
       if (quotes.length > 0) {
         var wantBackup = confirm('注意：覆盖导入会替换当前所有句子。\n\n建议先导出一份当前数据的备份。\n\n点击【确定】：备份并继续\n点击【取消】：直接选文件');
         if (wantBackup) {
-          downloadQuotesFile('覆盖前备份_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '_' + quotes.length + '条.json');
+        downloadQuotesFile('鸟与光_覆盖前备份_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '_' + quotes.length + '条.json');
           toast('已导出备份');
         }
       }
@@ -3706,7 +3706,7 @@ if (!q) {
     URL.revokeObjectURL(url);
   }
   function exportJSON() {
-    downloadQuotesFile('句鸟备份_' + new Date().toISOString().slice(0, 10) + '_' + quotes.length + '条.json');
+    downloadQuotesFile('鸟与光_备份_' + new Date().toISOString().slice(0, 10) + '_' + quotes.length + '条.json');
     localStorage.setItem(LAST_EXPORT_KEY, JSON.stringify({ time: Date.now(), count: quotes.length }));
     $('backupTip').classList.remove('show');
   }
