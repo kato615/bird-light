@@ -1487,8 +1487,8 @@
   /* ===== 手机竖屏适配 (屏幕较窄) ===== */
   @media (max-width: 768px) {
     .dropdown {
-      width: calc(100% - 32px) !important;
-      max-width: 320px !important;
+      width: 280px !important; /* 👈 固定宽度，不再占满全屏 */
+      max-width: calc(100vw - 32px) !important; /* 防止超小屏溢出 */
       right: 16px !important;
       left: auto !important;
     }
@@ -2125,8 +2125,8 @@ body[data-theme="light"] .tb-drawer-back:hover { background: rgba(0,0,0,0.05); c
 /* 手机端适配：依然是从右上角下拉，只调整宽度 */
 @media (max-width: 768px) {
   .tb-drawer {
-    width: calc(100% - 32px);
-    max-width: 320px;
+    width: 280px; /* 👈 固定宽度 */
+    max-width: calc(100vw - 32px); 
     right: 16px;
   }
 }
