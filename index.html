@@ -1893,9 +1893,9 @@ body[data-theme="light"] .dropdown {
   content: '';
   position: absolute;
   top: 0; 
-  left: -100vw; /* 左右绝对拉满，铺满整个屏幕宽度，无论怎么切屏都不露边 */
+  left: -100vw; 
   right: -100vw; 
-  bottom: -60px;
+  bottom: -15px; /* 👈 从 -60px 改到 -15px，让它刚好收在顶栏下方一点点 */
   z-index: -1;
   pointer-events: none;
   
