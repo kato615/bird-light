@@ -73,7 +73,13 @@
   @keyframes light2 { 0%, 100% { transform: translate(-4vmax, 0) scale(1.01); opacity: 0.85; border-radius: 50% 50% 50% 50%; } 12.5% { transform: translate(-2.8vmax, -3vmax) scale(0.98); opacity: 0.7; border-radius: 48% 52% 55% 45%; } 25% { transform: translate(0, -4.2vmax) scale(0.95); opacity: 0.6; border-radius: 45% 55% 38% 62%; } 37.5% { transform: translate(2.8vmax, -3vmax) scale(0.97); opacity: 0.65; border-radius: 46% 54% 42% 58%; } 50% { transform: translate(4vmax, 0) scale(1.06); opacity: 0.88; border-radius: 58% 42% 60% 40%; } 62.5% { transform: translate(2.8vmax, 3vmax) scale(1.03); opacity: 0.75; border-radius: 55% 45% 52% 48%; } 75% { transform: translate(0, 4.2vmax) scale(1.02); opacity: 0.7; border-radius: 50% 50% 48% 52%; } 87.5% { transform: translate(-2.8vmax, 3vmax) scale(1.04); opacity: 0.8; border-radius: 52% 48% 58% 42%; } }
   @keyframes light3 { 0%, 100% { transform: translate(0, 3vmax) scale(1); opacity: 0.7; border-radius: 50% 50% 50% 50%; } 12.5% { transform: translate(-3vmax, 2vmax) scale(1.02); opacity: 0.82; border-radius: 52% 48% 55% 45%; } 25% { transform: translate(-4.2vmax, 0) scale(1.05); opacity: 0.88; border-radius: 58% 42% 55% 45%; } 37.5% { transform: translate(-3vmax, -2vmax) scale(1.03); opacity: 0.78; border-radius: 55% 45% 52% 48%; } 50% { transform: translate(0, -3vmax) scale(0.98); opacity: 0.65; border-radius: 45% 55% 48% 52%; } 62.5% { transform: translate(3vmax, -2vmax) scale(0.96); opacity: 0.62; border-radius: 48% 52% 55% 45%; } 75% { transform: translate(4.2vmax, 0) scale(1.04); opacity: 0.82; border-radius: 60% 40% 55% 45%; } 87.5% { transform: translate(3vmax, 2vmax) scale(1.01); opacity: 0.75; border-radius: 52% 48% 50% 50%; } }
 
-  .grain-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E"); background-size: 240px 240px; animation: grainShift 26s linear infinite; mix-blend-mode: soft-light; }
+  @keyframes grainShift { 
+    0%{background-position:0 0;} 
+    25%{background-position:-60px 40px;} 
+    50%{background-position:40px -60px;} 
+    75%{background-position:-40px -40px;} 
+    100%{background-position:0 0;} 
+  }
   @keyframes grainShift { 0%{background-position:0 0;} 25%{background-position:-60px 40px;} 50%{background-position:40px -60px;} 75%{background-position:-40px -40px;} 100%{background-position:0 0;} }
 
   /* 时钟默认（深色模式） */
@@ -213,7 +219,7 @@
   .dropdown hr { border: none; border-top: 1px solid #333; margin: 6px 0; position: relative; z-index: 1; }
 
   /* ===== 列表页 (页面2) ===== */
-  #list { flex: 1; overflow-y: auto; position: relative; padding: 0 40px 140px; }
+  #list { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding: 0 40px 140px; }
   #list::-webkit-scrollbar { width: 3px; }
   #list::-webkit-scrollbar-track { background: transparent; }
   #list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
@@ -281,7 +287,7 @@
   .backup-tip button.close-btn { background: transparent; padding: 8px; font-size: 16px; color: #888; }
 
   /* ===== 页面3：书架 ===== */
-  #shelf { flex: 1; overflow-y: auto; position: relative; padding: 0 40px 40px; }
+  #shelf { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding: 0 40px 40px; }
   #shelf::-webkit-scrollbar { width: 3px; }
   #shelf::-webkit-scrollbar-track { background: transparent; }
   #shelf::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
@@ -1869,6 +1875,444 @@ body[data-theme="light"] .dropdown {
     animation-play-state: paused !important;
   }
 
+/* ===== 新顶栏 ===== */
+.tb-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -40px; /* 👈 关键：抵消父容器的 40px 内边距，让顶栏全宽 */
+  padding: 10px 16px; /* 👈 按钮距离屏幕边缘只留 16px，点触极其自然 */
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  width: calc(100% + 80px); /* 配合 margin 撑满全宽 */
+  background: transparent; /* 容器本身透明 */
+}
+
+/* 全屏渐变毛玻璃层 */
+.tb-topbar::before {
+  content: '';
+  position: absolute;
+  top: 0; 
+  left: -100vw; /* 左右绝对拉满，铺满整个屏幕宽度，无论怎么切屏都不露边 */
+  right: -100vw; 
+  bottom: -60px;
+  z-index: -1;
+  pointer-events: none;
+  
+  /* 极度微弱的底色。如果觉得还会脏，你可以把这里改成 transparent */
+  background: rgba(26, 26, 26, 0.25); 
+  
+  /* 纯粹的毛玻璃，只糊字，不糊光团 */
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  
+  /* 关键：用遮罩让边缘彻底溶解，没有任何清晰分界线 */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 100%);
+}
+
+/* 晨雾模式（浅色） */
+body[data-theme="light"] .tb-topbar::before {
+  background: rgba(249, 249, 247, 0.3);
+}
+
+.tb-topbar .tb-back {
+  flex: 0 0 auto;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: transparent; border: none;
+  color: #bbb; font-size: 26px; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  transition: color 0.2s, background 0.2s;
+}
+.tb-topbar .tb-back:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.tb-topbar .tb-back:active { background: rgba(255,255,255,0.12); }
+
+/* 右侧按钮区 */
+
+.tb-actions {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: 4px;
+  margin-left: auto;
+}
+.tb-icon-btn {
+  flex: 0 0 auto;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: transparent; border: none;
+  color: #bbb; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  transition: color 0.2s, background 0.2s;
+}
+.tb-icon-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.tb-icon-btn:active { background: rgba(255,255,255,0.12); }
+
+.tb-text-btn {
+  display: none;
+  flex: 0 0 auto;
+  padding: 0 12px; 
+  height: 40px;
+  border-radius: 10px;
+  background: transparent; border: none;
+  color: var(--accent-text, #6fcf97);
+  font-size: 14px; font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.tb-text-btn:hover { background: rgba(255,255,255,0.06); }
+
+/* ===== 搜索框的基础样式 ===== */
+.tb-search-wrap {
+  display: none;
+  flex: 1; min-width: 0;
+  align-items: center; gap: 6px;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(30, 30, 30, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.tb-search-wrap .tb-search-icon { flex: 0 0 auto; color: rgba(255,255,255,0.5); }
+.tb-search-wrap input {
+  flex: 1; min-width: 0;
+  background: transparent; border: none; outline: none;
+  color: #e8e8e8; font-size: 14px; font-family: inherit;
+  padding: 0;
+}
+.tb-search-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+.tb-search-wrap:focus-within {
+  background: rgba(45, 45, 45, 0.7);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+
+#list.searching .tb-search-wrap,
+#shelf.searching .tb-search-wrap { display: flex; }
+#list.searching .tb-text-btn,
+#shelf.searching .tb-text-btn { display: inline-flex; }
+#list.searching .tb-icon-btn,
+#shelf.searching .tb-icon-btn { display: none; }
+
+body[data-theme="light"] .tb-search-wrap {
+  background: rgba(252, 252, 250, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+body[data-theme="light"] .tb-search-wrap:focus-within {
+  background: #fcfcfa;
+  border-color: rgba(var(--accent-rgb), 0.6);
+  box-shadow: none;
+}
+body[data-theme="light"] .tb-search-wrap input { color: #333; }
+body[data-theme="light"] .tb-search-wrap input::placeholder { color: #999; }
+body[data-theme="light"] .tb-search-wrap .tb-search-icon { color: #888; }
+body[data-theme="light"] .tb-back,
+body[data-theme="light"] .tb-icon-btn { color: #555; }
+body[data-theme="light"] .tb-back:hover,
+body[data-theme="light"] .tb-icon-btn:hover { color: #000; background: rgba(0,0,0,0.05); }
+
+/* ===== 抽屉及主页菜单公共滑动动画 ===== */
+.tb-drawer-inner, .dropdown-inner {
+  position: relative;
+  overflow: hidden;
+}
+.tb-drawer-page, .dropdown-page {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.tb-drawer-page.active, .dropdown-page.active {
+  display: block;
+  position: relative;
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 2;
+}
+.tb-drawer-page.slide-out-left, .dropdown-page.slide-out-left {
+  display: block;
+  transform: translateX(-30%);
+  opacity: 0;
+  z-index: 1;
+}
+.tb-drawer-page.slide-out-right, .dropdown-page.slide-out-right {
+  display: block;
+  transform: translateX(100%);
+  opacity: 0;
+  z-index: 1;
+}
+.tb-drawer-page.slide-in-right, .dropdown-page.slide-in-right {
+  display: block;
+  transform: translateX(100%);
+  opacity: 0;
+}
+.tb-drawer-page.slide-in-left, .dropdown-page.slide-in-left {
+  display: block;
+  transform: translateX(-30%);
+  opacity: 0;
+}
+
+/* ===== 通用返回按钮 ===== */
+.tb-drawer-back {
+  width: 32px; height: 32px;
+  border-radius: 10px; 
+  background: transparent; border: none;
+  color: #bbb;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; cursor: pointer;
+  margin: 4px 8px;
+  font-size: 24px; line-height: 1;
+  transition: background 0.2s, color 0.2s;
+}
+.tb-drawer-back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+body[data-theme="light"] .tb-drawer-back { color: #555; }
+body[data-theme="light"] .tb-drawer-back:hover { background: rgba(0,0,0,0.05); color: #000; }
+
+/* ===== 收纳抽屉主体 ===== */
+.tb-drawer-mask {
+  position: fixed; inset: 0;
+  background: transparent;
+  z-index: 80;
+  display: none;
+}
+.tb-drawer-mask.show { display: block; }
+
+.tb-drawer {
+  position: fixed;
+  z-index: 90;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  
+  top: 72px; 
+  right: 24px; /* 和右侧按钮对齐 */
+  background: #262626;
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 280px; 
+  max-width: 320px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 90px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.tb-drawer.open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 手机端适配：依然是从右上角下拉，只调整宽度 */
+@media (max-width: 768px) {
+  .tb-drawer {
+    width: calc(100% - 32px);
+    max-width: 320px;
+    right: 16px;
+  }
+}
+
+/* 晨雾模式适配 */
+body[data-theme="light"] .tb-drawer {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08) !important;
+}
+
+/* 内部按钮排版统一（对齐主页菜单） */
+.tb-drawer-inner { padding: 0; }
+.tb-drawer-item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; text-align: left;
+  padding: 12px 16px;
+  background: transparent; border: none; border-radius: 8px;
+  color: #e8e8e8; font-size: 15px; font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.tb-drawer-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.tb-drawer-item:active { background: rgba(255,255,255,0.18); }
+
+body[data-theme="light"] .tb-drawer-item { color: #333; }
+body[data-theme="light"] .tb-drawer-item:hover { background: rgba(0,0,0,0.06); }
+body[data-theme="light"] .tb-drawer-item:active { background: rgba(0,0,0,0.12); }
+
+
+.tb-drawer-item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; text-align: left;
+  padding: 14px 16px;
+  background: transparent; border: none; border-radius: 8px;
+  color: #e8e8e8; font-size: 15px; font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tb-drawer-item:hover { background: rgba(255,255,255,0.08); }
+.tb-drawer-item:active { background: rgba(255,255,255,0.16); }
+.tb-drawer-item.tb-drawer-danger { color: #ff9a9a; }
+.tb-drawer-item .tb-drawer-sub { display: flex; align-items: center; gap: 6px; }
+.tb-drawer-item .tb-drawer-value { font-size: 13px; color: #999; }
+.tb-drawer-item .tb-drawer-arrow { font-size: 13px; color: #666; }
+.tb-drawer-sep { height: 1px; background: #333; margin: 6px 8px; }
+
+body[data-theme="light"] .tb-drawer-item { color: #333; }
+body[data-theme="light"] .tb-drawer-item:hover { background: rgba(0,0,0,0.06); }
+body[data-theme="light"] .tb-drawer-item .tb-drawer-value { color: #888; }
+body[data-theme="light"] .tb-drawer-sep { background: rgba(0,0,0,0.06); }
+body[data-theme="light"] .tb-drawer-item.tb-drawer-danger { color: #b0463f; }
+
+.tb-drawer[data-mode="list"] .tb-drawer-only-shelf { display: none; }
+.tb-drawer[data-mode="shelf"] .tb-drawer-only-list { display: none; }
+
+.tb-drawer-page-title {
+  padding: 8px 16px 4px;
+  font-size: 13px; color: #999; text-align: center;
+}
+body[data-theme="light"] .tb-drawer-page-title { color: #888; }
+
+.tb-drawer-tags { max-height: 50vh; overflow-y: auto; padding: 4px 0; }
+.tb-tag-item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; text-align: left;
+  padding: 12px 16px;
+  background: transparent; border: none; border-radius: 6px;
+  color: #d0d0d0; font-size: 14px; font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tb-tag-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.tb-tag-item.active { color: var(--accent-text, #6fcf97); }
+.tb-tag-item .tb-tag-count { font-size: 12px; color: #777; }
+.tb-tag-item .tb-tag-remove {
+  width: 22px; height: 22px;
+  border-radius: 5px; border: none;
+  background: transparent; color: #666;
+  font-size: 13px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.tb-tag-item:hover .tb-tag-remove { opacity: 1; }
+.tb-tag-item .tb-tag-remove:hover { background: rgba(255,80,80,0.18); color: #ff8080; }
+body[data-theme="light"] .tb-tag-item { color: #444; }
+body[data-theme="light"] .tb-tag-item:hover { background: rgba(0,0,0,0.05); color: #111; }
+body[data-theme="light"] .tb-tag-item .tb-tag-count { color: #888; }
+
+/* ===== 主页菜单适配新增结构 ===== */
+.dropdown-toggle-item {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #e8e8e8;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+.dropdown-toggle-item:hover { background: rgba(255,255,255,0.08); }
+body[data-theme="light"] .dropdown-toggle-item { color: #333; }
+body[data-theme="light"] .dropdown-toggle-item:hover { background: rgba(0,0,0,0.06); }
+.dropdown-page > button:not(.dropdown-toggle-item):not(.tb-drawer-back):not(.theme-btn):not(.mode-btn):not(.auto-speed-btn) {
+  display: flex; width: 100%; text-align: left; padding: 12px 16px; background: transparent; border-radius: 8px; font-size: 15px; flex: none; position: relative; z-index: 1; transition: background 0.2s, color 0.2s; border: none; justify-content: space-between; align-items: center; color: #e8e8e8; cursor: pointer;
+}
+.dropdown-page > button:not(.dropdown-toggle-item):not(.tb-drawer-back):not(.theme-btn):not(.mode-btn):not(.auto-speed-btn):hover { background: rgba(255,255,255,0.08); color: #fff; }
+body[data-theme="light"] .dropdown-page > button:not(.dropdown-toggle-item):not(.tb-drawer-back):not(.theme-btn):not(.mode-btn):not(.auto-speed-btn) { color: #333; }
+body[data-theme="light"] .dropdown-page > button:not(.dropdown-toggle-item):not(.tb-drawer-back):not(.theme-btn):not(.mode-btn):not(.auto-speed-btn):hover { background: rgba(0,0,0,0.06); }
+
+/* 书架页搜索下拉调整定位 */
+.global-search-results { top: 80px !important; }
+
+/* ===== 修复二级面板（外观）的排版 ===== */
+
+/* 1. 给整个面板顶部留出空间，避免和返回键重叠 */
+.dropdown-page[data-page="appearance"] {
+  padding-top: 36px; 
+}
+
+/* 2. 把返回按钮变成左上角的精致小按钮，绝对定位 */
+.dropdown-page .tb-drawer-back {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 30px;
+  height: 30px;
+  flex: none; /* 防止被拉伸 */
+  padding: 0;
+  margin: 0;
+  background: transparent; 
+  border-radius: 8px;
+  color: #aaa;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.dropdown-page .tb-drawer-back:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* 3. 恢复“显示模式”和“主题”的左对齐和小字体 */
+.dropdown-page .sub-label {
+  font-size: 12px !important;
+  color: #777 !important;
+  padding: 8px 16px 4px 16px !important;
+  text-align: left !important;
+  font-weight: normal !important;
+}
+
+/* 4. 修复主题按钮的排版，去除过大留白，和标题对齐 */
+.dropdown-page .theme-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px !important; 
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #bbb;
+  flex: none;
+  border: none;
+  transition: background 0.2s;
+}
+.dropdown-page .theme-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.dropdown-page .theme-btn.active { color: var(--accent-text); }
+.dropdown-page .theme-btn.active::after {
+  content: '✓';
+  font-size: 12px;
+  color: var(--accent-text);
+  margin-left: 8px;
+}
+
+/* 5. 晨雾模式下的颜色适配 */
+body[data-theme="light"] .dropdown-page .tb-drawer-back { color: #555; }
+body[data-theme="light"] .dropdown-page .tb-drawer-back:hover { background: rgba(0,0,0,0.05); color: #000; }
+body[data-theme="light"] .dropdown-page .sub-label { color: #888 !important; }
+body[data-theme="light"] .dropdown-page .theme-btn { color: #333; }
+body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,0,0.06); }
+
 </style>
 </head>
 <body data-theme="pink">
@@ -1896,52 +2340,60 @@ body[data-theme="light"] .dropdown {
     <span></span><span></span><span></span>
   </button>
   <div class="dropdown" id="dropdown">
-    <button id="menuAdd">添加句子</button>
-    <button id="menuGoList">列表/标签</button>
-    <button id="menuGoShelf">我的书架</button>
-    <button id="menuShare">分享</button>
-    <button id="menuAbout">关于 鸟与光</button>
-    <button id="menuAppearanceToggle" class="sub-toggle">
-      <span>外观</span><span class="arrow">▶</span>
-    </button>
-    <div class="sub-panel" id="appearancePanel">
-      <div class="sub-label">显示模式</div>
-      <div style="display: flex; gap: 8px; padding: 0 16px 10px 28px;">
-        <button class="mode-btn active" id="btnModeQuote" style="flex: 1; padding: 8px 0; text-align: center; background: rgba(var(--accent-rgb), 0.25); color: var(--accent-text); border: 1px solid rgba(var(--accent-rgb), 0.5); border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;">句子</button>
-        <button class="mode-btn" id="btnModeClock" style="flex: 1; padding: 8px 0; text-align: center; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid transparent; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;">时钟</button>
+    <div class="dropdown-inner" id="dropdownInner">
+      <!-- 主页菜单一级面板 -->
+      <div class="dropdown-page active" data-page="main">
+        <button id="menuAdd">添加句子</button>
+        <button id="menuGoList">列表/标签</button>
+        <button id="menuGoShelf">我的书架</button>
+        <button id="menuShare">分享</button>
+        <button id="menuAbout">关于 鸟与光</button>
+        <button id="menuAppearanceToggle" class="dropdown-toggle-item">
+          <span>外观</span>
+          <span class="tb-drawer-sub"><span class="tb-drawer-arrow">›</span></span>
+        </button>
       </div>
-      <div class="sub-label">主题</div>
-      <button class="theme-btn" data-theme="dark">冷夜</button>
-      <button class="theme-btn" data-theme="pink">粉紫</button>
-      <button class="theme-btn" data-theme="sunset">落日</button>
-      <button class="theme-btn" data-theme="light">晨雾</button>
-      <div class="font-row">
-        <span>字号</span>
-        <div class="slider-wrap">
-          <div class="slider-ticks"><i></i><i></i><i></i></div>
-          <input type="range" id="fontSlider" min="0" max="2" step="1" value="0">
-        </div>
-        <span class="font-val" id="fontVal">小</span>
-      </div>
-      <button id="menuToggleLight" class="toggle-item">
-        <span>切句时换灯位</span>
-        <span class="toggle-state" id="lightToggleState">开</span>
-      </button>
       
-      <button id="menuAutoSwitch" class="toggle-item" style="display: flex !important; justify-content: space-between; align-items: center; padding: 12px 16px; background: transparent; border-radius: 8px; font-size: 15px; color: #e8e8e8; cursor: pointer; transition: background 0.2s;">
-        <span>自动换句</span>
-        <span class="toggle-state" id="autoSwitchState" style="font-size: 12px; color: #777; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.06); transition: background 0.2s, color 0.2s;">关</span>
-      </button>
-      <div id="autoSwitchPanel" style="display: none; padding: 0 16px 12px 28px;">
-        <div style="display: flex; gap: 8px; font-size: 13px; color: #aaa; margin-top: 4px;">
-          <button class="auto-speed-btn" data-time="30000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">30 秒</button>
-          <button class="auto-speed-btn" data-time="60000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">1 分钟</button>
-          <button class="auto-speed-btn" data-time="180000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">3 分钟</button>
+      <!-- 主页菜单二级面板：外观 -->
+      <div class="dropdown-page" data-page="appearance">
+        <button class="tb-drawer-back" data-action="back" aria-label="返回">‹</button>
+        <div class="sub-label">显示模式</div>
+        <div style="display: flex; gap: 8px; padding: 0 16px 10px 28px;">
+          <button class="mode-btn active" id="btnModeQuote" style="flex: 1; padding: 8px 0; text-align: center; background: rgba(var(--accent-rgb), 0.25); color: var(--accent-text); border: 1px solid rgba(var(--accent-rgb), 0.5); border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;">句子</button>
+          <button class="mode-btn" id="btnModeClock" style="flex: 1; padding: 8px 0; text-align: center; background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid transparent; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;">时钟</button>
+        </div>
+        <div class="sub-label">主题</div>
+        <button class="theme-btn" data-theme="dark">冷夜</button>
+        <button class="theme-btn" data-theme="pink">粉紫</button>
+        <button class="theme-btn" data-theme="sunset">落日</button>
+        <button class="theme-btn" data-theme="light">晨雾</button>
+        <div class="font-row">
+          <span>字号</span>
+          <div class="slider-wrap">
+            <div class="slider-ticks"><i></i><i></i><i></i></div>
+            <input type="range" id="fontSlider" min="0" max="2" step="1" value="0">
+          </div>
+          <span class="font-val" id="fontVal">小</span>
+        </div>
+        <button id="menuToggleLight" class="toggle-item">
+          <span>切句时换灯位</span>
+          <span class="toggle-state" id="lightToggleState">开</span>
+        </button>
+        <button id="menuAutoSwitch" class="toggle-item">
+          <span>自动换句</span>
+          <span class="toggle-state" id="autoSwitchState">关</span>
+        </button>
+        <div id="autoSwitchPanel" style="display: none; padding: 0 16px 12px 28px;">
+          <div style="display: flex; gap: 8px; font-size: 13px; color: #aaa; margin-top: 4px;">
+            <button class="auto-speed-btn" data-time="30000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">30 秒</button>
+            <button class="auto-speed-btn" data-time="60000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">1 分钟</button>
+            <button class="auto-speed-btn" data-time="180000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">3 分钟</button>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
+
 
 <div id="quoteDisplay" style="transition: opacity 0.8s ease; opacity: 1;">
     <div class="quote-text" id="quoteText">飞鸟还未曾掠过，光里空无一物。</div>
@@ -1983,19 +2435,20 @@ body[data-theme="light"] .dropdown {
     <button id="btnBackupNow">立即导出</button>
     <button id="btnBackupClose" class="close-btn">✕</button>
   </div>
-  <div class="top-bar" id="listTopBar">
-    <button class="back-arrow" id="btnBackHome" aria-label="返回">‹</button>
-    <div class="top-bar-inner">
-      <div class="tag-filter" id="tagFilter">
-        <button class="tag-filter-btn" id="tagFilterBtn">
-          <span id="tagFilterLabel">全部</span>
-          <span class="tag-arrow">▾</span>
-        </button>
-        <div class="tag-filter-panel" id="tagFilterPanel"></div>
-      </div>
+  <div class="tb-topbar" id="listTopBar">
+    <button class="tb-back" id="btnBackHome" aria-label="返回">‹</button>
+    <div class="tb-search-wrap" id="listSearchWrap">
+      <svg class="tb-search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input type="text" id="searchInput" placeholder="搜索句子...">
-      <button class="list-add-btn" id="btnAddFromList"><span>+</span></button>
-      <button class="list-add-btn" id="btnBatchFromList" style="font-size: 16px;">✎</button>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-icon-btn" id="btnListSearch" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+      <button class="tb-icon-btn" id="btnListMenu" aria-label="收纳">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+      </button>
+      <button class="tb-text-btn" id="btnListSearchCancel">取消</button>
     </div>
   </div>
   <div id="quoteList"></div>
@@ -2005,25 +2458,25 @@ body[data-theme="light"] .dropdown {
     <button class="merge-btn-cancel" id="btnBatchSelectAll">全选</button>
     <button class="merge-btn-danger" id="btnBatchDelete">删除</button>
   </div>
-
 </div>
+
 
 <!-- 页面3：书架 -->
 <div id="shelf" class="screen">
-  <div class="top-bar" id="shelfTopBar">
-    <button class="back-arrow" id="btnShelfBack">‹</button>
-    <div class="top-bar-inner">
-      <div style="position:relative; flex: 0 0 auto;">
-        <button class="shelf-sort-btn" id="btnShelfSort">⇅ 最近录入</button>
-        <div class="shelf-sort-panel" id="shelfSortPanel">
-          <button data-sort="recent" class="active">最近录入</button>
-          <button data-sort="count">句子最多</button>
-          <button data-sort="alpha">按名字 A-Z</button>
-        </div>
-      </div>
+  <div class="tb-topbar" id="shelfTopBar">
+    <button class="tb-back" id="btnShelfBack" aria-label="返回">‹</button>
+    <div class="tb-search-wrap" id="shelfSearchWrap">
+      <svg class="tb-search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input type="text" id="shelfSearchInput" placeholder="搜索句子或书名...">
-      <button class="list-add-btn" id="btnAddFromShelf"><span>+</span></button>
-      <button class="shelf-sort-btn" id="btnShelfEdit" style="padding: 0; width: 34px; justify-content: center; font-size: 16px;">✎</button>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-icon-btn" id="btnShelfSearch" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+      <button class="tb-icon-btn" id="btnShelfMenu" aria-label="收纳">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+      </button>
+      <button class="tb-text-btn" id="btnShelfSearchCancel">取消</button>
     </div>
   </div>
   
@@ -2072,15 +2525,6 @@ body[data-theme="light"] .dropdown {
   </div>
 </div>
 
-<!-- 悬浮导入导出栏（只在页面2显示） -->
-<div class="fab" id="fab">
-  <div class="fab-menu" id="fabMenu">
-    <button id="btnImportOverwrite" class="fab-item fab-danger">覆盖导入</button>
-    <button id="btnImportMerge" class="fab-item">合并导入</button>
-    <button id="btnExport" class="fab-item">导出 JSON</button>
-  </div>
-  <button class="fab-toggle" id="fabToggle">⋯</button>
-</div>
 
 <!-- 分享壁纸弹窗 -->
 <div class="share-mask" id="shareMask">
@@ -2480,15 +2924,11 @@ function calcFontSize(text) {
     if (autoSwitchEnabled) startAutoSwitch();
   }
 
-  function bindThemeToggle() {
-    var toggle = $('menuAppearanceToggle'), panel = $('appearancePanel');
-    if (!toggle || !panel) return;
-    toggle.addEventListener('click', function (e) { e.stopPropagation(); var open = panel.classList.toggle('open'); toggle.classList.toggle('open', open); });
-  }
   function updateFontTicks(idx) {
     var ticks = document.querySelectorAll('.slider-ticks i');
     for (var i = 0; i < ticks.length; i++) ticks[i].classList.toggle('active', i <= idx);
   }
+
   function updateFontSlider() {
     var slider = $('fontSlider'), valEl = $('fontVal'), idx = currentStepIndex();
     if (!slider) return;
@@ -2601,59 +3041,9 @@ if (!q) {
     list.sort(function (a, b) { return b.count - a.count; }); return list;
   }
 
-  function renderTagPanel() {
-    var panel = $('tagFilterPanel'); if (!panel) return;
-    var tags = collectTags();
-    var untaggedCount = 0;
-    for (var i = 0; i < quotes.length; i++) { var t = quotes[i].tags; if (!Array.isArray(t) || t.length === 0) untaggedCount++; }
-    var html = '<button data-tag="" class="' + (currentTagFilter === '' ? 'active' : '') + '"><span>全部</span><span class="tag-count">' + quotes.length + '</span></button>';
-    if (tags.length === 0) { html += '<div class="tag-empty">还没有标签</div>'; }
-    else {
-      for (var j = 0; j < tags.length; j++) {
-        var tg = tags[j];
-        html += '<button data-tag="' + esc(tg.name) + '" class="' + (currentTagFilter === tg.name ? 'active' : '') + '"><span>' + esc(tg.name) + '</span><span class="tag-count">' + tg.count + '</span><span class="tag-remove" data-remove-tag="' + esc(tg.name) + '">×</span></button>';
-      }
-    }
-    if (quotes.length > 0) html += '<button data-tag="__untagged__" class="' + (currentTagFilter === '__untagged__' ? 'active' : '') + '"><span>未标签</span><span class="tag-count">' + untaggedCount + '</span></button>';
-    panel.innerHTML = html;
-  }
-
-  function updateTagLabel() {
-    var label = $('tagFilterLabel'); if (!label) return;
-    if (currentTagFilter === '') label.textContent = '全部';
-    else if (currentTagFilter === '__untagged__') label.textContent = '未标签';
-    else label.textContent = currentTagFilter;
-  }
-
-  function deleteTagEverywhere(tagName) {
-    var changed = 0;
-    quotes.forEach(function (q) {
-      if (!Array.isArray(q.tags)) return;
-      var i = q.tags.indexOf(tagName);
-      if (i !== -1) { q.tags.splice(i, 1); changed++; }
-    });
-    if (changed === 0) return;
-    saveQuotes();
-    if (currentTagFilter === tagName) { currentTagFilter = ''; updateTagLabel(); }
-    renderTagPanel(); renderList($('searchInput').value);
-  }
-
-  function setTagFilter(tag) {
-    currentTagFilter = tag || ''; updateTagLabel(); renderTagPanel(); renderList($('searchInput').value);
-    var f = $('tagFilter'); if (f) f.classList.remove('open');
-  }
-
-  function bindTagFilter() {
-    var wrap = $('tagFilter'), btn = $('tagFilterBtn'), panel = $('tagFilterPanel');
-    if (!wrap || !btn || !panel) return;
-    btn.addEventListener('click', function (e) { e.stopPropagation(); var open = wrap.classList.toggle('open'); if (open) renderTagPanel(); });
-    panel.addEventListener('click', function (e) {
-      var rm = e.target.closest('[data-remove-tag]');
-      if (rm) { e.stopPropagation(); var tagName = rm.getAttribute('data-remove-tag'); if (!confirm('从所有句子中删除标签「' + tagName + '」？\n句子本身不会删除。')) return; deleteTagEverywhere(tagName); return; }
-      var b = e.target.closest('button'); if (!b) return; e.stopPropagation(); setTagFilter(b.getAttribute('data-tag') || '');
-    });
-    document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) wrap.classList.remove('open'); });
-  }
+  // 旧版标签筛选面板已废弃，标签筛选统一在收纳抽屉内
+  function renderTagPanel() {}
+  function bindTagFilter() {}
 
   // === 渲染列表 (页面2) ===
   function renderList(filter) {
@@ -2752,30 +3142,12 @@ if (!q) {
   }
 
   function bindShelfEvents() {
-    $('btnShelfSort').addEventListener('click', function(e) { e.stopPropagation(); $('shelfSortPanel').style.display = $('shelfSortPanel').style.display === 'block' ? 'none' : 'block'; });
-    document.addEventListener('click', function(e) { if (!e.target.closest('.shelf-sort-btn') && !e.target.closest('.shelf-sort-panel')) $('shelfSortPanel').style.display = 'none'; });
-    
-    document.querySelectorAll('#shelfSortPanel button').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        currentShelfSort = btn.getAttribute('data-sort');
-        var text = btn.textContent;
-        $('btnShelfSort').textContent = '⇅ ' + text;
-        document.querySelectorAll('#shelfSortPanel button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        $('shelfSortPanel').style.display = 'none';
-        renderShelf();
-      });
-    });
-
-    $('btnShelfEdit').addEventListener('click', function() { toggleShelfMergeMode(); });
-    
     $('btnMergeConfirm').addEventListener('click', function() {
       if (shelfSelectedBooks.size < 2) { alert('请至少选择两本书进行合并'); return; }
       var newName = prompt('请输入合并后的标准书名（例如：三体）', Array.from(shelfSelectedBooks)[0]);
       if (!newName || !newName.trim()) return;
       newName = newName.trim();
       if (newName.indexOf('《') === -1 && newName.indexOf('》') === -1) newName = '《' + newName + '》';
-      
       var count = 0;
       quotes.forEach(function(q) {
         var s = (q.source || '').trim();
@@ -2792,29 +3164,22 @@ if (!q) {
       var card = e.target.closest('.book-card');
       if (!card) return;
       var source = card.getAttribute('data-source');
-      
       if (shelfMergeMode) {
         if (shelfSelectedBooks.has(source)) { shelfSelectedBooks.delete(source); card.classList.remove('selected'); }
         else { shelfSelectedBooks.add(source); card.classList.add('selected'); }
         return;
       }
-      
       card.classList.add('pulled');
-      
-      setTimeout(function() {
-        openBookModal(source);
-      }, 180);
+      setTimeout(function() { openBookModal(source); }, 180);
     });
 
     $('shelfSearchInput').addEventListener('input', function(e) {
       var val = e.target.value.trim().toLowerCase();
       var panel = $('globalSearchResults');
       if (!val) { panel.classList.remove('show'); return; }
-      
       var results = quotes.filter(function(q) {
         return q.text.toLowerCase().indexOf(val) !== -1 || (q.source && q.source.toLowerCase().indexOf(val) !== -1);
       }).slice(0, 30);
-
       if (results.length === 0) {
         panel.innerHTML = '<div class="empty" style="padding: 20px;">没有找到匹配的内容</div>';
       } else {
@@ -2836,17 +3201,16 @@ if (!q) {
       if (!q) return;
       $('globalSearchResults').classList.remove('show');
       $('shelfSearchInput').value = '';
+      exitShelfSearch();
       openBookModal(q.source || '未归类摘抄');
       setTimeout(function() { highlightQuoteInModal(id); }, 350);
     });
 
     document.addEventListener('click', function(e) {
-      if (!e.target.closest('#shelfSearchInput') && !e.target.closest('#globalSearchResults')) {
+      if (!e.target.closest('#shelfSearchInput') && !e.target.closest('#globalSearchResults') && !e.target.closest('.tb-search-wrap')) {
         $('globalSearchResults').classList.remove('show');
       }
     });
-
-    $('btnAddFromShelf').addEventListener('click', function() { openModal(null); });
   }
 
   // === 大弹窗逻辑（书籍详情） ===
@@ -2931,26 +3295,16 @@ if (!q) {
     }, 1500);
   }
 
-  // === 通用弹窗、气泡与工具 ===
   function showScreen(id, direction) {
-
-    // 进入子页面时，推入历史记录
-if (direction === 'forward' && (id === 'list' || id === 'shelf')) {
-  window.history.pushState({ page: id }, '');
-}
-
+    if (direction === 'forward' && (id === 'list' || id === 'shelf')) {
+      window.history.pushState({ page: id }, '');
+    }
     var current = document.querySelector('.screen.active'), target = $(id);
     if (!target || current === target || screenAnimating) return;
     screenAnimating = true;
     var isForward = direction !== 'back';
-    
-    var fab = $('fab');
-    if (fab) {
-      if (id === 'list') fab.style.display = 'flex';
-      else { closeFab(); fab.style.display = 'none'; }
-    }
     if (id !== 'shelf') $('globalSearchResults').classList.remove('show');
-
+    closeDrawer();
     if (!current) { target.classList.add('active'); screenAnimating = false; return; }
     current.classList.add(isForward ? 'anim-out-left' : 'anim-out-right');
     setTimeout(function () {
@@ -2962,12 +3316,261 @@ if (direction === 'forward' && (id === 'list' || id === 'shelf')) {
 
   function closeDropdown() { 
     $('dropdown').classList.remove('active'); 
-    $('appearancePanel').classList.remove('open'); 
-    $('menuAppearanceToggle').classList.remove('open'); 
     document.body.classList.remove('menu-open'); 
+    // 重置回主页面板
+    var inner = $('dropdownInner');
+    if (inner) {
+      var pages = inner.querySelectorAll('.dropdown-page');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.remove('active', 'slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
+      }
+      var main = inner.querySelector('[data-page="main"]');
+      if (main) main.classList.add('active');
+    }
   }
 
-  function closeFab() { var fab = $('fab'), toggle = $('fabToggle'); if (!fab) return; fab.classList.remove('open'); if (toggle) toggle.textContent = '⋯'; }
+  var drawerCurrentPage = 'main';
+  var drawerSource = 'list';
+
+  function openDrawer(source) {
+    if (source === 'list' && isSearchActive('list')) exitListSearch();
+    if (source === 'shelf' && isSearchActive('shelf')) exitShelfSearch();
+    if (source === 'list' && batchMode) exitBatchMode();
+    if (source === 'shelf' && shelfMergeMode) { toggleShelfMergeMode(false); $('btnShelfSelectAll').textContent = '全选'; }
+    drawerSource = source;
+    var drawer = $('tbDrawer');
+    drawer.setAttribute('data-mode', source);
+    showDrawerPage('main');
+    updateDrawerValues();
+    drawer.classList.add('open');
+    $('tbDrawerMask').classList.add('show');
+  }
+  
+  function closeDrawer() {
+    $('tbDrawer').classList.remove('open');
+    $('tbDrawerMask').classList.remove('show');
+    drawerCurrentPage = 'main';
+  }
+
+  function switchPage(containerId, targetPageName, isBack) {
+    var container = $(containerId);
+    if (!container) return;
+    var oldPage = container.querySelector('.active');
+    var newPage = container.querySelector('[data-page="' + targetPageName + '"]');
+    if (!newPage || oldPage === newPage) return;
+
+    var pages = container.querySelectorAll('.dropdown-page, .tb-drawer-page');
+    for (var i = 0; i < pages.length; i++) {
+      pages[i].classList.remove('slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
+    }
+
+    if (oldPage) {
+      oldPage.classList.remove('active');
+      oldPage.classList.add(isBack ? 'slide-out-right' : 'slide-out-left');
+      setTimeout(function() { oldPage.classList.remove('slide-out-right', 'slide-out-left'); }, 250);
+    }
+
+    newPage.classList.add(isBack ? 'slide-in-left' : 'slide-in-right');
+    void newPage.offsetWidth;
+    newPage.classList.add('active');
+    newPage.classList.remove('slide-in-left', 'slide-in-right');
+  }
+
+  function showDrawerPage(pageName, isBack) {
+    if (drawerCurrentPage === pageName) return;
+    switchPage('tbDrawerInner', pageName, isBack);
+    drawerCurrentPage = pageName;
+    if (pageName === 'tags') renderDrawerTags();
+    if (pageName === 'sort') renderDrawerSort();
+  }
+
+  function updateDrawerValues() {
+    var tagVal = $('tbTagFilterValue');
+    if (tagVal) {
+      if (currentTagFilter === '') tagVal.textContent = '全部';
+      else if (currentTagFilter === '__untagged__') tagVal.textContent = '未标签';
+      else tagVal.textContent = currentTagFilter;
+    }
+    var sortVal = $('tbSortValue');
+    if (sortVal) {
+      var map = { recent: '最近录入', count: '句子最多', alpha: '按名字 A-Z' };
+      sortVal.textContent = map[currentShelfSort] || '最近录入';
+    }
+  }
+  function renderDrawerTags() {
+    var listEl = $('tbDrawerTagList');
+    if (!listEl) return;
+    var tags = collectTags();
+    var untaggedCount = 0;
+    for (var i = 0; i < quotes.length; i++) { var t = quotes[i].tags; if (!Array.isArray(t) || t.length === 0) untaggedCount++; }
+    
+    var html = '<button class="tb-tag-item' + (currentTagFilter === '' ? ' active' : '') + '" data-tag=""><span>全部</span><span class="tb-tag-count">' + quotes.length + '</span></button>';
+    
+    // 【修改点】：把“未标签”的生成逻辑移到了“全部”的下面
+    if (quotes.length > 0) {
+      html += '<button class="tb-tag-item' + (currentTagFilter === '__untagged__' ? ' active' : '') + '" data-tag="__untagged__"><span>未标签</span><span class="tb-tag-count">' + untaggedCount + '</span></button>';
+    }
+
+    if (tags.length === 0) {
+      html += '<div class="empty" style="padding:14px;font-size:13px;">还没有标签</div>';
+    } else {
+      for (var j = 0; j < tags.length; j++) {
+        var tg = tags[j];
+        html += '<button class="tb-tag-item' + (currentTagFilter === tg.name ? ' active' : '') + '" data-tag="' + esc(tg.name) + '">'
+          + '<span>' + esc(tg.name) + '</span>'
+          + '<span style="display:flex;align-items:center;gap:4px;">'
+          + '<span class="tb-tag-count">' + tg.count + '</span>'
+          + '<span class="tb-tag-remove" data-remove-tag="' + esc(tg.name) + '">×</span>'
+          + '</span></button>';
+      }
+    }
+    
+    // 删除了原本在末尾添加“未标签”的代码
+    listEl.innerHTML = html;
+  }
+
+  function renderDrawerSort() {
+    document.querySelectorAll('#tbDrawerSortList .tb-tag-item').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-sort') === currentShelfSort);
+    });
+  }
+
+  function bindTopbarAndDrawer() {
+    $('tbDrawerMask').addEventListener('click', function() {
+      if (drawerCurrentPage === 'main') closeDrawer();
+      else showDrawerPage('main', true);
+    });
+
+    $('tbDrawer').addEventListener('click', function(e) {
+      var back = e.target.closest('.tb-drawer-back');
+      if (back) { showDrawerPage('main', true); return; }
+      
+      var item = e.target.closest('.tb-drawer-item');
+      if (item) { handleDrawerAction(item.getAttribute('data-action')); return; }
+      
+      var tagItem = e.target.closest('.tb-tag-item');
+      if (tagItem && drawerCurrentPage === 'tags') {
+        var remove = e.target.closest('[data-remove-tag]');
+        if (remove) {
+          e.stopPropagation();
+          var tagName = remove.getAttribute('data-remove-tag');
+          if (!confirm('从所有句子中删除标签「' + tagName + '」？\n句子本身不会删除。')) return;
+          deleteTagEverywhere(tagName);
+          renderDrawerTags();
+          return;
+        }
+        currentTagFilter = tagItem.getAttribute('data-tag') || '';
+        updateTagLabel();
+        renderList($('searchInput').value);
+        closeDrawer();
+        return;
+      }
+      var sortItem = e.target.closest('#tbDrawerSortList .tb-tag-item');
+      if (sortItem && drawerCurrentPage === 'sort') {
+        currentShelfSort = sortItem.getAttribute('data-sort');
+        renderShelf();
+        closeDrawer();
+        return;
+      }
+    });
+
+    // 主页菜单返回按钮
+    $('dropdownInner').addEventListener('click', function(e) {
+      if (e.target.closest('[data-action="back"]')) {
+        switchPage('dropdownInner', 'main', true);
+      }
+    });
+
+    $('menuAppearanceToggle').addEventListener('click', function(e) {
+      e.stopPropagation();
+      switchPage('dropdownInner', 'appearance', false);
+    });
+
+    $('btnListSearch').addEventListener('click', function() { enterListSearch(); });
+    $('btnListSearchCancel').addEventListener('click', function() { exitListSearch(); });
+    $('btnShelfSearch').addEventListener('click', function() { enterShelfSearch(); });
+    $('btnShelfSearchCancel').addEventListener('click', function() { exitShelfSearch(); });
+
+    $('btnListMenu').addEventListener('click', function(e) {
+      e.stopPropagation();
+      if ($('tbDrawer').classList.contains('open') && drawerSource === 'list') closeDrawer();
+      else openDrawer('list');
+    });
+    $('btnShelfMenu').addEventListener('click', function(e) {
+      e.stopPropagation();
+      if ($('tbDrawer').classList.contains('open') && drawerSource === 'shelf') closeDrawer();
+      else openDrawer('shelf');
+    });
+
+    $('searchInput').addEventListener('input', function() {
+      renderList(this.value);
+    });
+  }
+
+  function handleDrawerAction(action) {
+    if (action === 'add') { closeDrawer(); openModal(null); }
+    else if (action === 'tag-filter') showDrawerPage('tags');
+    else if (action === 'sort') showDrawerPage('sort');
+    else if (action === 'batch') {
+      closeDrawer();
+      if (drawerSource === 'list') enterBatchMode();
+      else if (drawerSource === 'shelf') toggleShelfMergeMode(true);
+    }
+    else if (action === 'import-merge') { closeDrawer(); importMode = 'merge'; $('importFile').click(); }
+    else if (action === 'import-overwrite') {
+      closeDrawer();
+      if (quotes.length > 0) {
+        var wantBackup = confirm('注意：覆盖导入会替换当前所有句子。\n\n建议先导出一份当前数据的备份。\n\n点击【确定】：备份并继续\n点击【取消】：直接选文件');
+        if (wantBackup) {
+          downloadQuotesFile('覆盖前备份_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '_' + quotes.length + '条.json');
+          toast('已导出备份');
+        }
+      }
+      importMode = 'overwrite';
+      setTimeout(function () { $('importFile').click(); }, 300);
+    }
+    else if (action === 'export') { closeDrawer(); exportJSON(); }
+  }
+
+  function enterListSearch() {
+    if (batchMode) exitBatchMode();
+    closeDrawer();
+    $('list').classList.add('searching');
+    setTimeout(function() { $('searchInput').focus(); }, 50);
+  }
+  function exitListSearch() {
+    $('list').classList.remove('searching');
+    $('searchInput').value = '';
+    renderList('');
+  }
+  function isSearchActive(page) {
+    if (page === 'list') return $('list').classList.contains('searching');
+    if (page === 'shelf') return $('shelf').classList.contains('searching');
+    return false;
+  }
+  function enterShelfSearch() {
+    if (shelfMergeMode) { toggleShelfMergeMode(false); $('btnShelfSelectAll').textContent = '全选'; }
+    closeDrawer();
+    $('shelf').classList.add('searching');
+    setTimeout(function() { $('shelfSearchInput').focus(); }, 50);
+  }
+  function exitShelfSearch() {
+    $('shelf').classList.remove('searching');
+    $('shelfSearchInput').value = '';
+    $('globalSearchResults').classList.remove('show');
+  }
+  function enterBatchMode() {
+    batchMode = true;
+    $('list').classList.add('batch-mode');
+    $('btnBatchSelectAll').textContent = '全选';
+  }
+  function exitBatchMode() {
+    batchMode = false;
+    batchSelected.clear();
+    $('list').classList.remove('batch-mode');
+    var items = document.querySelectorAll('#quoteList .quote-item');
+    for (var i = 0; i < items.length; i++) { items[i].classList.remove('selected'); }
+  }
 
   function openModal(quote, lockSource) {
     editingId = quote ? quote.id : null;
@@ -3248,14 +3851,6 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     if (shelfEl && shelfTopBar) shelfEl.addEventListener('scroll', function () { if (shelfEl.scrollTop > 20) shelfTopBar.classList.add('scrolled'); else shelfTopBar.classList.remove('scrolled'); }, { passive: true });
   }
 
-  function bindFab() {
-    var fab = $('fab'), toggle = $('fabToggle'), menu = $('fabMenu');
-    if (!fab || !toggle) return;
-    toggle.addEventListener('click', function (e) { e.stopPropagation(); var open = fab.classList.toggle('open'); toggle.textContent = open ? '×' : '⋯'; });
-    if (menu) menu.addEventListener('click', function (e) { if (!e.target.closest('.fab-item')) return; closeFab(); });
-    document.addEventListener('click', function (e) { if (!fab.classList.contains('open')) return; if (fab.contains(e.target)) return; closeFab(); });
-  }
-
   function bindKeyboard() {
     document.addEventListener('keydown', function (e) {
       var stage = $('overlayStage');
@@ -3263,13 +3858,15 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
         e.preventDefault();
         return;
       }
-      
       var tag = (e.target.tagName || '').toLowerCase(), inInput = tag === 'input' || tag === 'textarea';
       if (e.key === 'Escape') {
+        if ($('tbDrawer').classList.contains('open')) { closeDrawer(); return; }
         if ($('bookModalMask').classList.contains('show')) { closeBookModal(); return; }
         if ($('modal').classList.contains('active')) { tryCloseModal(); return; }
         if ($('dropdown').classList.contains('active')) { closeDropdown(); return; }
         if (bubbleVisible) { hideBubble(); return; }
+        if (isSearchActive('list')) { exitListSearch(); return; }
+        if (isSearchActive('shelf')) { exitShelfSearch(); return; }
         return;
       }
       if (inInput || !$('home').classList.contains('active')) return;
@@ -3539,10 +4136,10 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     }
   }
 
-   function bindEvents() {
+  function bindEvents() {
     $('btnMenu').addEventListener('click', function (e) { 
       e.stopPropagation(); 
-      var isOpen = $('dropdown').classList.toggle('active'); // 👈 在这里定义 isOpen
+      var isOpen = $('dropdown').classList.toggle('active');
       document.body.classList.toggle('menu-open', isOpen); 
     });
     document.addEventListener('click', function (e) { var dd = $('dropdown'); if (!dd.classList.contains('active')) return; if (dd.contains(e.target)) return; closeDropdown(); });
@@ -3551,41 +4148,27 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     $('menuGoList').addEventListener('click', function () { closeDropdown(); showScreen('list', 'forward'); renderList(''); checkBackupTip(); });
     $('menuGoShelf').addEventListener('click', function () { closeDropdown(); showScreen('shelf', 'forward'); renderShelf(); });
 
-    // === 分享壁纸逻辑 ===
     $('menuShare').addEventListener('click', function () {
       closeDropdown();
       setTimeout(function () {
-      $('shareMask').classList.add('show');
-      window.history.pushState({ modal: true }, '');
-
-        // 打开时，默认选中当前主页的主题
+        $('shareMask').classList.add('show');
+        window.history.pushState({ modal: true }, '');
         var currentTheme = document.body.getAttribute('data-theme') || 'dark';
         if (currentTheme !== 'pink' && currentTheme !== 'sunset' && currentTheme !== 'light') currentTheme = 'dark';
         shareTheme = currentTheme;
-        
-        document.querySelectorAll('.theme-btn-share').forEach(b => {
-          b.classList.toggle('active', b.getAttribute('data-theme') === currentTheme);
-        });
-
+        document.querySelectorAll('.theme-dot').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-theme') === currentTheme); });
         drawShareCanvas();
       }, 100);
     });
 
-    $('btnShareClose').addEventListener('click', function () {
-      $('shareMask').classList.remove('show');
-    });
-    
-    $('shareMask').addEventListener('click', function (e) {
-      if (e.target === $('shareMask')) $('shareMask').classList.remove('show');
-    });
+    $('btnShareClose').addEventListener('click', function () { $('shareMask').classList.remove('show'); });
+    $('shareMask').addEventListener('click', function (e) { if (e.target === $('shareMask')) $('shareMask').classList.remove('show'); });
 
-    // --- 尺寸互切逻辑 ---
     var sizeBtns = document.querySelectorAll('.ratio-text');
     sizeBtns.forEach(function(btn) {
       btn.addEventListener('click', function () {
-        sizeBtns.forEach(b => b.classList.remove('active'));
+        sizeBtns.forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
-
         if (this.id === 'btnSizeA') {
           if (this.textContent === '9:16') { this.textContent = '16:9'; this.setAttribute('data-w', 1920); this.setAttribute('data-h', 1080); }
           else { this.textContent = '9:16'; this.setAttribute('data-w', 1080); this.setAttribute('data-h', 1920); }
@@ -3594,203 +4177,145 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
           if (this.textContent === '3:4') { this.textContent = '4:3'; this.setAttribute('data-w', 1440); this.setAttribute('data-h', 1080); }
           else { this.textContent = '3:4'; this.setAttribute('data-w', 1080); this.setAttribute('data-h', 1440); }
         }
-
         currentShareW = parseInt(this.getAttribute('data-w'), 10);
         currentShareH = parseInt(this.getAttribute('data-h'), 10);
         drawShareCanvas();
       });
     });
 
-    // --- 主题互切逻辑 ---
-    var themeDots = document.querySelectorAll('.theme-dot');
-    themeDots.forEach(function (dot) {
+    document.querySelectorAll('.theme-dot').forEach(function (dot) {
       dot.addEventListener('click', function () {
-        themeDots.forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.theme-dot').forEach(function(d) { d.classList.remove('active'); });
         this.classList.add('active');
         shareTheme = this.getAttribute('data-theme');
         drawShareCanvas();
       });
     });
 
-    // --- 主题互切逻辑 ---
-    document.querySelectorAll('.theme-btn-share').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.theme-btn-share').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        shareTheme = this.getAttribute('data-theme');
-        // 切换主题时，重新生成背景
-        drawShareCanvas();
-      });
-    });
-
-    // 保存图片
     $('btnSaveImage').addEventListener('click', function () {
       var canvas = $('shareCanvas');
       var url = canvas.toDataURL('image/png');
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = '鸟与光_' + new Date().toISOString().slice(0,10) + '.png';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      toast('图片已保存');
-    });
+      
+      // 判断是否为移动端设备
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        canvas.toBlob(function(blob) {
+          // 1. 尝试唤起手机原生的分享/保存面板 (体验最好)
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'share.png', { type: 'image/png' })] })) {
+            var file = new File([blob], '鸟与光_' + new Date().toISOString().slice(0,10) + '.png', { type: 'image/png' });
+            navigator.share({ files: [file] }).then(function() {
+              toast('已保存/分享');
+            }).catch(function(err) {
+              if (err.name !== 'AbortError') openImageForSave(url);
+            });
+          } else {
+            // 2. 如果不支持原生分享，直接弹出一张大图让用户长按保存
+            openImageForSave(url);
+          }
+        }, 'image/png');
+      } else {
+        // 电脑端维持原本的直接下载
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = '鸟与光_' + new Date().toISOString().slice(0,10) + '.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast('图片已保存');
+      }
 
-    // 关于弹窗逻辑
-    $('menuAbout').addEventListener('click', function () {
-      closeDropdown();
-      setTimeout(function () {
-      $('aboutMask').classList.add('show');
-      window.history.pushState({ modal: true }, '');
-      }, 100);
-    });
-
-    $('btnAboutClose').addEventListener('click', function () {
-      $('aboutMask').classList.remove('show');
-    });
-    
-    $('aboutMask').addEventListener('click', function (e) {
-      if (e.target === $('aboutMask')) {
-        $('aboutMask').classList.remove('show');
+      // 辅助函数：弹出一个大图遮罩，方便用户长按保存
+      function openImageForSave(dataUrl) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(10,10,10,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);';
+        overlay.innerHTML = '<img src="' + dataUrl + '" style="max-width:90%;max-height:75vh;object-fit:contain;margin-bottom:20px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.5);"><div style="color:#fff;font-size:15px;padding:12px 24px;background:rgba(255,255,255,0.15);border-radius:30px;pointer-events:none;letter-spacing:1px;">长按图片保存到相册</div>';
+        overlay.onclick = function() { document.body.removeChild(overlay); };
+        document.body.appendChild(overlay);
       }
     });
 
-    $('menuToggleLight').addEventListener('click', function (e) { e.stopPropagation(); toggleLightToggle(); });
-    
-    $('menuAutoSwitch').addEventListener('click', function(e) { 
-      e.stopPropagation(); 
-      toggleAutoSwitch(); 
+    $('menuAbout').addEventListener('click', function () {
+      closeDropdown();
+      setTimeout(function () { $('aboutMask').classList.add('show'); window.history.pushState({ modal: true }, ''); }, 100);
     });
-    
+    $('btnAboutClose').addEventListener('click', function () { $('aboutMask').classList.remove('show'); });
+    $('aboutMask').addEventListener('click', function (e) { if (e.target === $('aboutMask')) $('aboutMask').classList.remove('show'); });
+
+    $('menuToggleLight').addEventListener('click', function (e) { e.stopPropagation(); toggleLightToggle(); });
+    $('menuAutoSwitch').addEventListener('click', function(e) { e.stopPropagation(); toggleAutoSwitch(); });
     document.querySelectorAll('.auto-speed-btn').forEach(function(btn) {
-      btn.addEventListener('click', function(e) { 
-        e.stopPropagation(); 
-        setAutoSwitchTime(parseInt(this.getAttribute('data-time'), 10)); 
-      });
+      btn.addEventListener('click', function(e) { e.stopPropagation(); setAutoSwitchTime(parseInt(this.getAttribute('data-time'), 10)); });
     });
 
     document.querySelectorAll('.theme-btn').forEach(function (b) { b.addEventListener('click', function (e) { e.stopPropagation(); applyTheme(b.getAttribute('data-theme'), false, { x: e.clientX, y: e.clientY }); }); });
     var fontSlider = $('fontSlider'); if (fontSlider) fontSlider.addEventListener('input', function (e) { e.stopPropagation(); applyStepIndex(parseInt(fontSlider.value, 10)); });
 
-    $('btnBackHome').addEventListener('click', function () { showScreen('home', 'back'); initialRender(); });
-    $('btnShelfBack').addEventListener('click', function () { showScreen('home', 'back'); initialRender(); });
+    $('btnBackHome').addEventListener('click', function () {
+      if (batchMode) { exitBatchMode(); return; }
+      if (isSearchActive('list')) { exitListSearch(); return; }
+      showScreen('home', 'back'); initialRender();
+    });
+    $('btnShelfBack').addEventListener('click', function () {
+      if (shelfMergeMode) { toggleShelfMergeMode(false); $('btnShelfSelectAll').textContent = '全选'; return; }
+      if (isSearchActive('shelf')) { exitShelfSearch(); return; }
+      showScreen('home', 'back'); initialRender();
+    });
 
-    $('btnAddFromList').addEventListener('click', function (e) { e.stopPropagation(); openModal(null); });
     $('btnCancel').addEventListener('click', function () { tryCloseModal(); });
     $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) tryCloseModal(); });
     $('btnSave').addEventListener('click', saveQuote);
 
-    // === 显示模式切换按钮绑定 ===
     var btnQ = $('btnModeQuote'); if (btnQ) btnQ.addEventListener('click', function() { toggleDisplayMode('quote'); });
     var btnC = $('btnModeClock'); if (btnC) btnC.addEventListener('click', function() { toggleDisplayMode('clock'); });
 
-
-    $('btnBatchFromList').addEventListener('click', function (e) {
-      e.stopPropagation();
-      batchMode = !batchMode;
-      $('list').classList.toggle('batch-mode', batchMode);
-      if (!batchMode) batchSelected.clear();
-      
-      var items = document.querySelectorAll('#quoteList .quote-item');
-      for (var i = 0; i < items.length; i++) {
-        if (batchMode && batchSelected.has(items[i].getAttribute('data-qid'))) {
-          items[i].classList.add('selected');
-        } else {
-          items[i].classList.remove('selected');
-        }
-      }
-    });
-
-    $('btnBatchCancel').addEventListener('click', function () {
-      batchMode = false;
-      batchSelected.clear();
-      $('list').classList.remove('batch-mode');
-      $('btnBatchSelectAll').textContent = '全选';
-      
-      var items = document.querySelectorAll('#quoteList .quote-item');
-      for (var j = 0; j < items.length; j++) { items[j].classList.remove('selected'); }
-    });
+    $('btnBatchCancel').addEventListener('click', function () { exitBatchMode(); });
 
     $('btnBatchSelectAll').addEventListener('click', function () {
       var currentItems = document.querySelectorAll('#quoteList .quote-item');
       if (currentItems.length === 0) return;
-
       var allSelected = true;
       for (var i = 0; i < currentItems.length; i++) {
-        if (!batchSelected.has(currentItems[i].getAttribute('data-qid'))) {
-          allSelected = false; break;
-        }
+        if (!batchSelected.has(currentItems[i].getAttribute('data-qid'))) { allSelected = false; break; }
       }
-
-      if (allSelected) {
-        batchSelected.clear();
-        this.textContent = '全选';
-      } else {
-        for (var i = 0; i < currentItems.length; i++) {
-          batchSelected.add(currentItems[i].getAttribute('data-qid'));
-        }
+      if (allSelected) { batchSelected.clear(); this.textContent = '全选'; }
+      else {
+        for (var i2 = 0; i2 < currentItems.length; i2++) { batchSelected.add(currentItems[i2].getAttribute('data-qid')); }
         this.textContent = '取消全选';
       }
-      
       var items = document.querySelectorAll('#quoteList .quote-item');
       for (var j = 0; j < items.length; j++) {
-        if (batchSelected.has(items[j].getAttribute('data-qid'))) {
-          items[j].classList.add('selected');
-        } else {
-          items[j].classList.remove('selected');
-        }
+        if (batchSelected.has(items[j].getAttribute('data-qid'))) items[j].classList.add('selected');
+        else items[j].classList.remove('selected');
       }
     });
 
     $('btnBatchDelete').addEventListener('click', function () {
       if (batchSelected.size === 0) { alert('请选择要删除的句子'); return; }
       if (!confirm('确定要删除这 ' + batchSelected.size + ' 条句子吗？')) return;
-      
       quotes = quotes.filter(function (q) { return !batchSelected.has(q.id); });
       saveQuotes();
-      
-      batchMode = false;
-      batchSelected.clear();
-      $('list').classList.remove('batch-mode');
+      exitBatchMode();
       renderList($('searchInput').value);
-      
       if ($('home').classList.contains('active')) initialRender();
     });
 
-    $('btnMergeCancel').addEventListener('click', function() { 
-      toggleShelfMergeMode(false); 
-      $('btnShelfSelectAll').textContent = '全选';
-    });
+    $('btnMergeCancel').addEventListener('click', function() { toggleShelfMergeMode(false); $('btnShelfSelectAll').textContent = '全选'; });
 
     $('btnShelfSelectAll').addEventListener('click', function () {
       var currentCards = document.querySelectorAll('#shelfGrid .book-card');
       if (currentCards.length === 0) return;
-
       var allSelected = true;
       for (var i = 0; i < currentCards.length; i++) {
-        if (!shelfSelectedBooks.has(currentCards[i].getAttribute('data-source'))) {
-          allSelected = false; break;
-        }
+        if (!shelfSelectedBooks.has(currentCards[i].getAttribute('data-source'))) { allSelected = false; break; }
       }
-
-      if (allSelected) {
-        shelfSelectedBooks.clear();
-        this.textContent = '全选';
-      } else {
-        for (var i = 0; i < currentCards.length; i++) {
-          shelfSelectedBooks.add(currentCards[i].getAttribute('data-source'));
-        }
+      if (allSelected) { shelfSelectedBooks.clear(); this.textContent = '全选'; }
+      else {
+        for (var i2 = 0; i2 < currentCards.length; i2++) { shelfSelectedBooks.add(currentCards[i2].getAttribute('data-source')); }
         this.textContent = '取消全选';
       }
-      
-      // 不重新渲染，直接更新卡片的状态
       var cards = document.querySelectorAll('#shelfGrid .book-card');
       for (var j = 0; j < cards.length; j++) {
-        if (shelfSelectedBooks.has(cards[j].getAttribute('data-source'))) {
-          cards[j].classList.add('selected');
-        } else {
-          cards[j].classList.remove('selected');
-        }
+        if (shelfSelectedBooks.has(cards[j].getAttribute('data-source'))) cards[j].classList.add('selected');
+        else cards[j].classList.remove('selected');
       }
     });
 
@@ -3799,49 +4324,26 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
         var item = e.target.closest('.quote-item');
         if (item) {
           var qid = item.getAttribute('data-qid');
-          if (batchSelected.has(qid)) {
-            batchSelected.delete(qid);
-            item.classList.remove('selected');
-          } else {
-            batchSelected.add(qid);
-            item.classList.add('selected');
-          }
+          if (batchSelected.has(qid)) { batchSelected.delete(qid); item.classList.remove('selected'); }
+          else { batchSelected.add(qid); item.classList.add('selected'); }
         }
-        return; 
+        return;
       }
-
       var starBtn = e.target.closest('.star-btn');
       if (starBtn) { e.stopPropagation(); toggleStar(starBtn.getAttribute('data-star')); return; }
       var editEl = e.target.closest('[data-edit]');
       var delEl = e.target.closest('[data-del]');
       var editId = editEl ? editEl.getAttribute('data-edit') : null;
       var delId = delEl ? delEl.getAttribute('data-del') : null;
-
-      if (editId) {
-        var q = quotes.find(function (x) { return x.id === editId; });
-        if (q) openModal(q);
-      } else if (delId) {
-        hideBubble(); pendingDelId = delId; var rect = delEl.getBoundingClientRect(); showDeleteBubble(rect.left + rect.width / 2, rect.top);
-      }
+      if (editId) { var q = quotes.find(function (x) { return x.id === editId; }); if (q) openModal(q); }
+      else if (delId) { hideBubble(); pendingDelId = delId; var rect = delEl.getBoundingClientRect(); showDeleteBubble(rect.left + rect.width / 2, rect.top); }
     }
     $('quoteList').addEventListener('click', function(e) { handleQuoteListClick(e, false); });
     $('bookModalList').addEventListener('click', function(e) { handleQuoteListClick(e, true); });
 
-    $('btnExport').addEventListener('click', exportJSON);
     $('btnBackupNow').addEventListener('click', exportJSON);
     $('btnBackupClose').addEventListener('click', function () { localStorage.setItem(BACKUP_TIP_DISMISS_KEY, String(quotes.length)); $('backupTip').classList.remove('show'); });
-    $('btnImportMerge').addEventListener('click', function () { importMode = 'merge'; $('importFile').click(); });
-    $('btnImportOverwrite').addEventListener('click', function () {
-      if (quotes.length > 0) {
-        var wantBackup = confirm('注意：覆盖导入会替换当前所有句子。\n\n建议先导出一份当前数据的备份。\n\n点击【确定】：备份并继续\n点击【取消】：直接选文件');
-        if (wantBackup) {
-          downloadQuotesFile('覆盖前备份_' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '_' + quotes.length + '条.json');
-          toast('已导出备份');
-        }
-      }
-      importMode = 'overwrite';
-      setTimeout(function () { $('importFile').click(); }, 300);
-    });
+
     $('importFile').addEventListener('change', function (e) { if (e.target.files[0]) importJSON(e.target.files[0], importMode); e.target.value = ''; });
 
     $('btnCopyBubble').addEventListener('click', function (e) { e.stopPropagation(); copyQuote(); });
@@ -3856,11 +4358,9 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
       if (delIndex === -1) return;
       var delQ = quotes[delIndex]; var wasCurrent = (currentId === delId);
       quotes.splice(delIndex, 1); saveQuotes();
-      
       renderList($('searchInput').value);
       if ($('shelf').classList.contains('active')) renderShelf();
       if ($('bookModalMask').classList.contains('show')) renderBookQuotes($('bookSearchInput').value);
-
       if (wasCurrent) {
         if (quotes.length === 0) { currentId = null; resetHistory(null); paintQuote(null); }
         else { var q2 = pickRandom(); resetHistory(q2 ? q2.id : null); paintQuote(q2); }
@@ -4014,22 +4514,28 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
   }
 
   function checkZenState() {
-    // 如果有任何弹窗或菜单开着，重置时间，保持显示
+    if (!$('home').classList.contains('active')) {
+      var mb = $('btnMenu');
+      if (mb && mb.classList.contains('hide-ui')) {
+        mb.classList.remove('hide-ui');
+        document.body.classList.remove('zen-hide-cursor');
+      }
+      return;
+    }
     if ($('dropdown').classList.contains('active') || 
         $('modal').classList.contains('active') || 
         $('bookModalMask').classList.contains('show') || 
         $('shareMask').classList.contains('show') || 
-        $('aboutMask').classList.contains('show')) {
+        $('aboutMask').classList.contains('show') ||
+        $('tbDrawer').classList.contains('open')) {
       lastZenActivity = Date.now(); 
       return;
     }
-
-    // 3秒无操作
     if (Date.now() - lastZenActivity > 3000) {
       var menuBtn = $('btnMenu');
       if (menuBtn && !menuBtn.classList.contains('hide-ui')) {
         menuBtn.classList.add('hide-ui');
-        document.body.classList.add('zen-hide-cursor'); // 添加隐藏鼠标的类
+        document.body.classList.add('zen-hide-cursor');
       }
     }
   }
@@ -4075,12 +4581,10 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
   });
 
   function init() {
-    // 初始化历史记录状态，防止一进主页就被滑动退出
     window.history.replaceState({ page: 'home' }, '');
 
     loadQuotes(); loadTheme(); loadLightToggle(); loadAutoSwitch();
 
-    // 恢复显示模式
     var savedMode = localStorage.getItem('haoju_display_mode');
     if (savedMode === 'clock') {
       toggleDisplayMode('clock');
@@ -4088,39 +4592,36 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
       toggleDisplayMode('quote');
     }
     
-document.documentElement.style.setProperty('--quote-size', calcFontSize('') + 'px');
+    document.documentElement.style.setProperty('--quote-size', calcFontSize('') + 'px');
     updateFontSlider();
     initialRender();
     
     bindEvents();
     bindShelfEvents();
     bindPresetTags();
-    bindTagFilter();
-    bindThemeToggle();
     bindLongPress();
     bindListCopy();
     bindTapZones();
     bindKeyboard();
-    bindFab();
     bindListScroll();
+    bindTopbarAndDrawer();
 
     initStage();
     bindStageEvents();
     $('home').style.opacity = '0.3';
     $('home').style.transform = 'scale(0.95)';
 
-var _resizeTimer = null;
-window.addEventListener('resize', function() {
-  clearTimeout(_resizeTimer);
-  _resizeTimer = setTimeout(function() {
-    var textEl = $('quoteText');
-    if (textEl) {
-      document.documentElement.style.setProperty('--quote-size', calcFontSize(textEl.textContent) + 'px');
-    }
-  }, 120);
-});
+    var _resizeTimer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(_resizeTimer);
+      _resizeTimer = setTimeout(function() {
+        var textEl = $('quoteText');
+        if (textEl) {
+          document.documentElement.style.setProperty('--quote-size', calcFontSize(textEl.textContent) + 'px');
+        }
+      }, 120);
+    });
 
-    // === 绑定沉浸模式 ===
     bindZenMode();
 
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function () {});
@@ -4129,6 +4630,54 @@ window.addEventListener('resize', function() {
   document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
+
+<!-- 收纳抽屉（全局共用一个） -->
+<div class="tb-drawer-mask" id="tbDrawerMask"></div>
+<div class="tb-drawer" id="tbDrawer" data-mode="list">
+  <div class="tb-drawer-inner" id="tbDrawerInner">
+    
+    <div class="tb-drawer-page active" data-page="main">
+      <button class="tb-drawer-item" data-action="add">添加句子</button>
+      <button class="tb-drawer-item tb-drawer-only-list" data-action="tag-filter">
+        <span>标签筛选</span>
+        <span class="tb-drawer-sub">
+          <span class="tb-drawer-value" id="tbTagFilterValue">全部</span>
+          <span class="tb-drawer-arrow">›</span>
+        </span>
+      </button>
+      <button class="tb-drawer-item tb-drawer-only-shelf" data-action="sort">
+        <span>排序</span>
+        <span class="tb-drawer-sub">
+          <span class="tb-drawer-value" id="tbSortValue">最近录入</span>
+          <span class="tb-drawer-arrow">›</span>
+        </span>
+      </button>
+      <button class="tb-drawer-item" data-action="batch">批量管理</button>
+      <div class="tb-drawer-sep"></div>
+      <button class="tb-drawer-item" data-action="import-merge">合并导入</button>
+      <button class="tb-drawer-item tb-drawer-danger" data-action="import-overwrite">覆盖导入</button>
+      <button class="tb-drawer-item" data-action="export">导出 JSON</button>
+    </div>
+
+    <div class="tb-drawer-page" data-page="tags">
+      <button class="tb-drawer-back" data-action="back" aria-label="返回">‹</button>
+      <div class="tb-drawer-page-title">标签筛选</div>
+      <div class="tb-drawer-tags" id="tbDrawerTagList"></div>
+    </div>
+
+    <div class="tb-drawer-page" data-page="sort">
+      <button class="tb-drawer-back" data-action="back" aria-label="返回">‹</button>
+      <div class="tb-drawer-page-title">排序</div>
+      <div class="tb-drawer-tags" id="tbDrawerSortList">
+        <button class="tb-tag-item" data-sort="recent">最近录入</button>
+        <button class="tb-tag-item" data-sort="count">句子最多</button>
+        <button class="tb-tag-item" data-sort="alpha">按名字 A-Z</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- 全屏遮罩：开屏与引导共用同一个舞台 -->
 <div id="overlayStage" class="guide-overlay">
