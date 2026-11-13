@@ -2043,12 +2043,14 @@ body[data-theme="light"] .tb-icon-btn:hover { color: #000; background: rgba(0,0,
   transform: translateX(-30%);
   opacity: 0;
   z-index: 1;
+  pointer-events: none; /* 👈 关键：让正在滑出的元素不再阻挡点击 */
 }
 .tb-drawer-page.slide-out-right, .dropdown-page.slide-out-right {
   display: block;
   transform: translateX(100%);
   opacity: 0;
   z-index: 1;
+  pointer-events: none; /* 👈 关键：让正在滑出的元素不再阻挡点击 */
 }
 .tb-drawer-page.slide-in-right, .dropdown-page.slide-in-right {
   display: block;
@@ -2192,17 +2194,14 @@ body[data-theme="light"] .tb-drawer-page-title { color: #888; }
   transition: background 0.15s;
 }
 .tb-tag-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
-.tb-tag-item.active { color: var(--accent-text, #6fcf97); }
+.tb-tag-item.active { 
+  color: var(--accent-text, #6fcf97); 
+  background: rgba(var(--accent-rgb), 0.15); /* 👈 加上高亮背景 */
+  font-weight: 500;
+}
 .tb-tag-item .tb-tag-count { font-size: 12px; color: #777; }
-.tb-tag-item .tb-tag-remove {
-  width: 22px; height: 22px;
-  border-radius: 5px; border: none;
-  background: transparent; color: #666;
-  font-size: 13px; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+.tb-tag-item.active .tb-tag-count {
+  color: var(--accent-text, #6fcf97); /* 👈 数字也跟着变亮 */
 }
 .tb-tag-item:hover .tb-tag-remove { opacity: 1; }
 .tb-tag-item .tb-tag-remove:hover { background: rgba(255,80,80,0.18); color: #ff8080; }
@@ -3349,6 +3348,18 @@ if (!q) {
   function closeDrawer() {
     $('tbDrawer').classList.remove('open');
     $('tbDrawerMask').classList.remove('show');
+    
+    // 【核心修复】：强制重置面板的 DOM 状态，保证下次打开时状态同步
+    var container = $('tbDrawerInner');
+    if (container) {
+      var pages = container.querySelectorAll('.tb-drawer-page');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.remove('active', 'slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
+        if (pages[i].getAttribute('data-page') === 'main') {
+          pages[i].classList.add('active');
+        }
+      }
+    }
     drawerCurrentPage = 'main';
   }
 
@@ -3397,6 +3408,24 @@ if (!q) {
       sortVal.textContent = map[currentShelfSort] || '最近录入';
     }
   }
+
+  function deleteTagEverywhere(tagName) {
+    var changed = 0;
+    quotes.forEach(function (q) {
+      if (!Array.isArray(q.tags)) return;
+      var i = q.tags.indexOf(tagName);
+      if (i !== -1) { q.tags.splice(i, 1); changed++; }
+    });
+    if (changed === 0) return;
+    saveQuotes();
+    if (currentTagFilter === tagName) { 
+      currentTagFilter = ''; 
+      updateDrawerValues(); 
+    }
+    renderDrawerTags();
+    renderList($('searchInput').value);
+  }
+
   function renderDrawerTags() {
     var listEl = $('tbDrawerTagList');
     if (!listEl) return;
@@ -3404,11 +3433,10 @@ if (!q) {
     var untaggedCount = 0;
     for (var i = 0; i < quotes.length; i++) { var t = quotes[i].tags; if (!Array.isArray(t) || t.length === 0) untaggedCount++; }
     
-    var html = '<button class="tb-tag-item' + (currentTagFilter === '' ? ' active' : '') + '" data-tag=""><span>全部</span><span class="tb-tag-count">' + quotes.length + '</span></button>';
+    var html = '<button type="button" class="tb-tag-item' + (currentTagFilter === '' ? ' active' : '') + '" data-tag=""><span>全部</span><span class="tb-tag-count">' + quotes.length + '</span></button>';
     
-    // 【修改点】：把“未标签”的生成逻辑移到了“全部”的下面
     if (quotes.length > 0) {
-      html += '<button class="tb-tag-item' + (currentTagFilter === '__untagged__' ? ' active' : '') + '" data-tag="__untagged__"><span>未标签</span><span class="tb-tag-count">' + untaggedCount + '</span></button>';
+      html += '<button type="button" class="tb-tag-item' + (currentTagFilter === '__untagged__' ? ' active' : '') + '" data-tag="__untagged__"><span>未标签</span><span class="tb-tag-count">' + untaggedCount + '</span></button>';
     }
 
     if (tags.length === 0) {
@@ -3416,7 +3444,7 @@ if (!q) {
     } else {
       for (var j = 0; j < tags.length; j++) {
         var tg = tags[j];
-        html += '<button class="tb-tag-item' + (currentTagFilter === tg.name ? ' active' : '') + '" data-tag="' + esc(tg.name) + '">'
+        html += '<button type="button" class="tb-tag-item' + (currentTagFilter === tg.name ? ' active' : '') + '" data-tag="' + esc(tg.name) + '">'
           + '<span>' + esc(tg.name) + '</span>'
           + '<span style="display:flex;align-items:center;gap:4px;">'
           + '<span class="tb-tag-count">' + tg.count + '</span>'
@@ -3425,7 +3453,6 @@ if (!q) {
       }
     }
     
-    // 删除了原本在末尾添加“未标签”的代码
     listEl.innerHTML = html;
   }
 
@@ -3442,16 +3469,29 @@ if (!q) {
     });
 
     $('tbDrawer').addEventListener('click', function(e) {
+      // 1. 处理返回键
       var back = e.target.closest('.tb-drawer-back');
-      if (back) { showDrawerPage('main', true); return; }
+      if (back) { 
+        e.preventDefault(); 
+        showDrawerPage('main', true); 
+        return; 
+      }
       
+      // 2. 处理一级菜单项（添加句子、批量管理等）
       var item = e.target.closest('.tb-drawer-item');
-      if (item) { handleDrawerAction(item.getAttribute('data-action')); return; }
+      if (item) { 
+        e.preventDefault(); 
+        handleDrawerAction(item.getAttribute('data-action')); 
+        return; 
+      }
       
+      // 3. 处理标签筛选
       var tagItem = e.target.closest('.tb-tag-item');
       if (tagItem && drawerCurrentPage === 'tags') {
+        // 处理右侧的删除 × 按钮
         var remove = e.target.closest('[data-remove-tag]');
         if (remove) {
+          e.preventDefault();
           e.stopPropagation();
           var tagName = remove.getAttribute('data-remove-tag');
           if (!confirm('从所有句子中删除标签「' + tagName + '」？\n句子本身不会删除。')) return;
@@ -3459,25 +3499,26 @@ if (!q) {
           renderDrawerTags();
           return;
         }
+        
+        // 处理点击标签过滤（加上 preventDefault 和 stopPropagation 防止被其他事件吃掉）
+        e.preventDefault();
+        e.stopPropagation();
+        
         currentTagFilter = tagItem.getAttribute('data-tag') || '';
-        updateTagLabel();
+        updateDrawerValues(); 
         renderList($('searchInput').value);
         closeDrawer();
         return;
       }
+      
+      // 4. 处理书架排序
       var sortItem = e.target.closest('#tbDrawerSortList .tb-tag-item');
       if (sortItem && drawerCurrentPage === 'sort') {
+        e.preventDefault();
         currentShelfSort = sortItem.getAttribute('data-sort');
         renderShelf();
         closeDrawer();
         return;
-      }
-    });
-
-    // 主页菜单返回按钮
-    $('dropdownInner').addEventListener('click', function(e) {
-      if (e.target.closest('[data-action="back"]')) {
-        switchPage('dropdownInner', 'main', true);
       }
     });
 
@@ -3763,22 +3804,46 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
 
   function bindLongPress() {
     var home = $('home'), textEl = $('quoteText');
-    home.addEventListener('touchstart', function (e) {
-      if (e.touches.length !== 1) return;
+    
+    // 1. 移动端处理：长按文字会触发 contextmenu 事件，直接拦截并弹气泡
+    home.addEventListener('contextmenu', function (e) {
+      // 只有点中文字区域才处理
       if (e.target === textEl || textEl.contains(e.target)) {
-        clearTimeout(longPressTimer);
-        longPressTimer = setTimeout(function () { var r = textEl.getBoundingClientRect(); pendingCopyText = ''; pendingEditId = currentId; $('btnShowBubble').style.display = 'none'; showBubble(r.left + r.width / 2, r.top + 20); }, 600);
+        e.preventDefault(); // 阻止系统自带的文本选择菜单
+        pendingCopyText = ''; 
+        pendingEditId = currentId; 
+        $('btnShowBubble').style.display = 'none'; 
+        showBubble(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
+      } else {
+        // 如果是点在其他地方，阻止默认菜单但不弹气泡
+        e.preventDefault();
       }
-    }, { passive: true });
-    home.addEventListener('touchmove', function () { clearTimeout(longPressTimer); }, { passive: true });
-    home.addEventListener('touchend', function () { clearTimeout(longPressTimer); }, { passive: true });
-    home.addEventListener('touchcancel', function () { clearTimeout(longPressTimer); }, { passive: true });
+    });
 
+    // 2. 电脑端处理：保留鼠标长按逻辑
+    var longPressTimerLocal = null;
+    var startPress = function(e) {
+      if (e.type === 'mousedown' && e.button !== 0) return;
+      clearTimeout(longPressTimerLocal);
+      longPressTimerLocal = setTimeout(function () { 
+        var r = textEl.getBoundingClientRect(); 
+        pendingCopyText = ''; 
+        pendingEditId = currentId; 
+        $('btnShowBubble').style.display = 'none'; 
+        showBubble(r.left + r.width / 2, r.top + 20); 
+      }, 600);
+    };
+    var cancelPress = function() { clearTimeout(longPressTimerLocal); };
+
+    textEl.addEventListener('mousedown', startPress);
+    textEl.addEventListener('mousemove', cancelPress);
+    textEl.addEventListener('mouseup', cancelPress);
+    textEl.addEventListener('mouseleave', cancelPress);
+
+    // 3. 点击空白处关闭气泡
     document.addEventListener('touchstart', function (e) { if (!bubbleVisible) return; if ($('copyBubble').contains(e.target)) return; hideBubble(); }, { passive: true });
     document.addEventListener('mousedown', function (e) { if (!bubbleVisible) return; if ($('copyBubble').contains(e.target)) return; hideBubble(); });
     document.addEventListener('mousedown', function (e) { if (!deleteBubbleVisible) return; if ($('deleteBubble').contains(e.target)) return; hideDeleteBubble(); });
-
-    textEl.addEventListener('contextmenu', function (e) { e.preventDefault(); pendingCopyText = ''; pendingEditId = currentId; $('btnShowBubble').style.display = 'none'; showBubble(e.clientX, e.clientY); });
   }
 
   function bindListCopy() {
@@ -4192,42 +4257,43 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
       });
     });
 
-    $('btnSaveImage').addEventListener('click', function () {
+    $('btnSaveImage').addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
       var canvas = $('shareCanvas');
-      var url = canvas.toDataURL('image/png');
       
-      // 判断是否为移动端设备
-      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        canvas.toBlob(function(blob) {
-          // 1. 尝试唤起手机原生的分享/保存面板 (体验最好)
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'share.png', { type: 'image/png' })] })) {
-            var file = new File([blob], '鸟与光_' + new Date().toISOString().slice(0,10) + '.png', { type: 'image/png' });
-            navigator.share({ files: [file] }).then(function() {
-              toast('已保存/分享');
-            }).catch(function(err) {
-              if (err.name !== 'AbortError') openImageForSave(url);
-            });
-          } else {
-            // 2. 如果不支持原生分享，直接弹出一张大图让用户长按保存
-            openImageForSave(url);
-          }
-        }, 'image/png');
-      } else {
-        // 电脑端维持原本的直接下载
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = '鸟与光_' + new Date().toISOString().slice(0,10) + '.png';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        toast('图片已保存');
+      // 电脑端：维持原本的直接下载
+      if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        try {
+          var url = canvas.toDataURL('image/png');
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = '鸟与光_' + new Date().toISOString().slice(0,10) + '.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          toast('图片已保存');
+        } catch(err) {
+          toast('保存失败，请重试');
+        }
+        return;
       }
 
-      // 辅助函数：弹出一个大图遮罩，方便用户长按保存
+      // 移动端：直接生成大图，让用户长按保存
+      try {
+        var mobileUrl = canvas.toDataURL('image/png');
+        openImageForSave(mobileUrl);
+      } catch(err) {
+        toast('图片生成失败，请稍后重试');
+      }
+
+      // 辅助函数：弹出一个全屏大图遮罩
       function openImageForSave(dataUrl) {
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(10,10,10,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);';
-        overlay.innerHTML = '<img src="' + dataUrl + '" style="max-width:90%;max-height:75vh;object-fit:contain;margin-bottom:20px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.5);"><div style="color:#fff;font-size:15px;padding:12px 24px;background:rgba(255,255,255,0.15);border-radius:30px;pointer-events:none;letter-spacing:1px;">长按图片保存到相册</div>';
+        // 注意：加了 -webkit-touch-callout: default 确保手机上长按能呼出保存菜单
+        overlay.innerHTML = '<img src="' + dataUrl + '" style="max-width:90%;max-height:75vh;object-fit:contain;margin-bottom:20px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.5);-webkit-touch-callout: default;"><div style="color:#fff;font-size:15px;padding:12px 24px;background:rgba(255,255,255,0.15);border-radius:30px;pointer-events:none;letter-spacing:1px;">长按图片保存到相册</div>';
         overlay.onclick = function() { document.body.removeChild(overlay); };
         document.body.appendChild(overlay);
       }
