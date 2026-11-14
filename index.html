@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+
+<!-- 默认浅色模式（晨雾） -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fcfcfa'/%3E%3Cstop offset='100%25' stop-color='%23f5f0ef'/%3E%3C/linearGradient%3E%3ClinearGradient id='platTop' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a8a3b8'/%3E%3Cstop offset='100%25' stop-color='%238c849e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg)'/%3E%3Cellipse cx='256' cy='256' rx='320' ry='120' fill='none' stroke='%23f4a3a3' stroke-width='8' transform='rotate(-35 256 256)' opacity='0.9'/%3E%3Cellipse cx='256' cy='256' rx='300' ry='100' fill='none' stroke='%23fde2e2' stroke-width='3' transform='rotate(-35 256 256)' opacity='0.8'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platTop)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%236b637c' opacity='0.5'/%3E%3Cpolygon points='180,250 230,310 180,280' fill='%231f1a26'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%233e344d' opacity='0.9'/%3E%3C/svg%3E" media="(prefers-color-scheme: light)">
+
+<!-- 系统暗黑模式（香槟金悬浮） -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgA' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1a1a'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3ClinearGradient id='beamA' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c98fd6' stop-opacity='0.4'/%3E%3Cstop offset='100%25' stop-color='%23c98fd6' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='platA' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236e3787'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3Cfilter id='glowGold'%3E%3CfeGaussianBlur stdDeviation='6' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3Cfilter id='glowStar'%3E%3CfeGaussianBlur stdDeviation='2' result='s'/%3E%3CfeMerge%3E%3CfeMergeNode in='s'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bgA)'/%3E%3Cg filter='url(%23glowStar)'%3E%3Ccircle cx='120' cy='120' r='2' fill='%23ffffff' opacity='0.4'/%3E%3Ccircle cx='380' cy='90' r='1.5' fill='%23e6c875' opacity='0.5'/%3E%3Ccircle cx='420' cy='240' r='2.5' fill='%23c98fd6' opacity='0.25'/%3E%3Ccircle cx='90' cy='300' r='1' fill='%23ffffff' opacity='0.3'/%3E%3Ccircle cx='330' cy='180' r='1' fill='%23ffffff' opacity='0.4'/%3E%3C/g%3E%3Cpolygon points='50,-50 450,350 450,450 50,50' fill='url(%23beamA)'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platA)'/%3E%3Cg filter='url(%23glowGold)'%3E%3Cpolygon points='256,220 300,280 256,260' fill='%23e6c875'/%3E%3Cpolygon points='256,220 212,280 256,260' fill='%23f5e3a0' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E" media="(prefers-color-scheme: dark)">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a1a">
 <title>鸟与光</title>
+
+<!-- 浅色模式显示晨雾图标 -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fcfcfa'/%3E%3Cstop offset='100%25' stop-color='%23f5f0ef'/%3E%3C/linearGradient%3E%3ClinearGradient id='platTop' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a8a3b8'/%3E%3Cstop offset='100%25' stop-color='%238c849e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg)'/%3E%3Cellipse cx='256' cy='256' rx='320' ry='120' fill='none' stroke='%23f4a3a3' stroke-width='8' transform='rotate(-35 256 256)' opacity='0.9'/%3E%3Cellipse cx='256' cy='256' rx='300' ry='100' fill='none' stroke='%23fde2e2' stroke-width='3' transform='rotate(-35 256 256)' opacity='0.8'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platTop)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%236b637c' opacity='0.5'/%3E%3Cpolygon points='180,250 230,310 180,280' fill='%231f1a26'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%233e344d' opacity='0.9'/%3E%3C/svg%3E" media="(prefers-color-scheme: light)">
+
+<!-- 深色模式显示落日橘图标 -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1a1a'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3ClinearGradient id='beam1' x1='50%25' y1='0%25' x2='50%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c98fd6' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%236e3787' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='plat1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236e3787' stop-opacity='0.9'/%3E%3Cstop offset='100%25' stop-color='%232e2338' stop-opacity='0.8'/%3E%3C/linearGradient%3E%3Cfilter id='glow1'%3E%3CfeGaussianBlur stdDeviation='6' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg1)'/%3E%3Cpolygon points='150,-50 350,450 150,450' fill='url(%23beam1)'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23plat1)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%23ffffff' opacity='0.1'/%3E%3Cg filter='url(%23glow1)'%3E%3Cpolygon points='180,250 230,310 180,280' fill='%23e0a878'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%23ffcfa3' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E" media="(prefers-color-scheme: dark)">
+
 <meta name="color-scheme" content="only light">
 <link rel="manifest" href="./manifest.json">
 <style>
@@ -305,7 +319,19 @@
 
   .book-slot { position: relative; min-width: 0; }
 
-  .book-slot::after { content: ''; position: absolute; left: -13px; right: -13px; bottom: -10px; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.11); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09); pointer-events: none; z-index: 1; }
+  .book-slot::after { 
+    content: ''; 
+    position: absolute; 
+    left: -11px; /* 👈 改为 -11px，刚好是 22px 间距的一半 */
+    right: -11px; /* 👈 改为 -11px */
+    bottom: -10px; 
+    height: 3px; 
+    /* border-radius: 2px; 👈 删掉圆角，否则拼接处会有小凹陷 */
+    background: rgba(255, 255, 255, 0.11); 
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45); 
+    pointer-events: none; 
+    z-index: 1; 
+  }
 
   .book-card { position: relative; width: 100%; aspect-ratio: 3 / 4; background: rgba(255, 255, 255, 0.055); border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 10px; padding: 20px 16px 16px; display: flex; flex-direction: column; justify-content: flex-start; cursor: pointer; overflow: hidden; -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(0, 0, 0, 0.25); transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
 
@@ -341,15 +367,15 @@
 
   @media (max-width: 900px) {
     .shelf-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 20px; }
-    .book-slot::after { left: -11px; right: -11px; }
+    .book-slot::after { left: -10px; right: -10px; } /* 👈 20的一半是10 */
   }
   @media (max-width: 720px) {
     .shelf-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 16px; }
-    .book-slot::after { left: -9px; right: -9px; }
+    .book-slot::after { left: -8px; right: -8px; } /* 👈 16的一半是8 */
   }
   @media (max-width: 480px) {
     .shelf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
-    .book-slot::after { left: -7px; right: -7px; }
+    .book-slot::after { left: -6px; right: -6px; } /* 👈 12的一半是6 */
   }
 
   /* ===== 悬浮操作栏（批量/合并） ===== */
@@ -1895,25 +1921,24 @@ body[data-theme="light"] .dropdown {
   top: 0; 
   left: -100vw; 
   right: -100vw; 
-  bottom: -15px; /* 👈 从 -60px 改到 -15px，让它刚好收在顶栏下方一点点 */
+  bottom: -40px; /* 👈 1. 从 -15px 拉回 -40px，给渐变留出足够的空间 */
   z-index: -1;
   pointer-events: none;
   
-  /* 极度微弱的底色。如果觉得还会脏，你可以把这里改成 transparent */
-  background: rgba(26, 26, 26, 0.25); 
+  background: rgba(26, 26, 26, 0.15); /* 👈 2. 降低一点底色透明度，减轻边缘的厚重感 */
   
-  /* 纯粹的毛玻璃，只糊字，不糊光团 */
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  /* 适度模糊，数值太大也会导致边缘硬化 */
+  -webkit-backdrop-filter: blur(16px); 
+  backdrop-filter: blur(16px);
   
-  /* 关键：用遮罩让边缘彻底溶解，没有任何清晰分界线 */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 100%);
+  /* 👈 3. 关键：用三个节点代替两段式。前 30% 保持模糊，后 70% 完全化开 */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%);
 }
 
 /* 晨雾模式（浅色） */
 body[data-theme="light"] .tb-topbar::before {
-  background: rgba(249, 249, 247, 0.3);
+  background: rgba(249, 249, 247, 0.2); /* 降低透明度，让白色边缘不刺眼 */
 }
 
 .tb-topbar .tb-back {
@@ -2281,6 +2306,54 @@ body[data-theme="light"] .dropdown-page .sub-label { color: #888 !important; }
 body[data-theme="light"] .dropdown-page .theme-btn { color: #333; }
 body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,0,0.06); }
 
+/* ===== 图标选择三级面板专属样式 ===== */
+.icon-pick-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #e8e8e8;
+}
+.icon-pick-btn:hover { background: rgba(255,255,255,0.08); }
+body[data-theme="light"] .icon-pick-btn { color: #333; }
+body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
+
+.icon-pick-left {
+  flex: 0 0 auto;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+.icon-pick-left img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.icon-pick-text {
+  flex: 1;
+  text-align: left;
+  font-size: 14px;
+}
+.icon-pick-check {
+  flex: 0 0 auto;
+  color: var(--accent-text);
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.icon-pick-btn.active .icon-pick-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
 </style>
 </head>
 <body data-theme="pink">
@@ -2309,7 +2382,7 @@ body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,
   </button>
   <div class="dropdown" id="dropdown">
     <div class="dropdown-inner" id="dropdownInner">
-      <!-- 主页菜单一级面板 -->
+      <!-- 1级面板：主菜单 -->
       <div class="dropdown-page active" data-page="main">
         <button id="menuAdd">添加句子</button>
         <button id="menuGoList">列表/标签</button>
@@ -2322,8 +2395,8 @@ body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,
         </button>
       </div>
       
-      <!-- 主页菜单二级面板：外观 -->
-        <div class="dropdown-page" data-page="appearance" style="padding-top: 4px;">
+      <!-- 2级面板：外观 -->
+      <div class="dropdown-page" data-page="appearance" style="padding-top: 4px;">
         <button class="tb-drawer-back" data-action="back" aria-label="返回">‹</button>
         <div class="sub-label">显示模式</div>
         <div style="display: flex; gap: 8px; padding: 0 16px 10px 28px;">
@@ -2335,6 +2408,13 @@ body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,
         <button class="theme-btn" data-theme="pink">粉紫</button>
         <button class="theme-btn" data-theme="sunset">落日</button>
         <button class="theme-btn" data-theme="light">晨雾</button>
+
+        <!-- 应用图标入口 -->
+        <button id="menuIconToggle" class="dropdown-toggle-item" style="margin-top: 8px;">
+          <span>应用图标</span>
+          <span class="tb-drawer-sub"><span class="tb-drawer-arrow">›</span></span>
+        </button>
+
         <div class="font-row">
           <span>字号</span>
           <div class="slider-wrap">
@@ -2358,10 +2438,43 @@ body[data-theme="light"] .dropdown-page .theme-btn:hover { background: rgba(0,0,
             <button class="auto-speed-btn" data-time="180000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">3 分钟</button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </div> <!-- 👈 注意这里，外观面板结束 -->
 
+      <!-- 3级面板：应用图标 -->
+      <div class="dropdown-page" data-page="icon-picker" style="padding-top: 4px;">
+        <button class="tb-drawer-back" data-action="back-icon" aria-label="返回">‹</button>
+        <div class="sub-label">选择应用图标</div>
+
+        <button class="icon-pick-btn" data-icon-type="light">
+          <div class="icon-pick-left">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fcfcfa'/%3E%3Cstop offset='100%25' stop-color='%23f5f0ef'/%3E%3C/linearGradient%3E%3ClinearGradient id='platTop' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a8a3b8'/%3E%3Cstop offset='100%25' stop-color='%238c849e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg)'/%3E%3Cellipse cx='256' cy='256' rx='320' ry='120' fill='none' stroke='%23f4a3a3' stroke-width='8' transform='rotate(-35 256 256)' opacity='0.9'/%3E%3Cellipse cx='256' cy='256' rx='300' ry='100' fill='none' stroke='%23fde2e2' stroke-width='3' transform='rotate(-35 256 256)' opacity='0.8'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platTop)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%236b637c' opacity='0.5'/%3E%3Cpolygon points='180,250 230,310 180,280' fill='%231f1a26'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%233e344d' opacity='0.9'/%3E%3C/svg%3E">
+          </div>
+          <span class="icon-pick-text">晨雾白</span>
+          <span class="icon-pick-check">✓</span>
+        </button>
+
+        <button class="icon-pick-btn" data-icon-type="dark">
+          <div class="icon-pick-left">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1a1a'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3ClinearGradient id='beam1' x1='50%25' y1='0%25' x2='50%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c98fd6' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%236e3787' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='plat1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236e3787' stop-opacity='0.9'/%3E%3Cstop offset='100%25' stop-color='%232e2338' stop-opacity='0.8'/%3E%3C/linearGradient%3E%3Cfilter id='glow1'%3E%3CfeGaussianBlur stdDeviation='6' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg1)'/%3E%3Cpolygon points='150,-50 350,450 150,450' fill='url(%23beam1)'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23plat1)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%23ffffff' opacity='0.1'/%3E%3Cg filter='url(%23glow1)'%3E%3Cpolygon points='180,250 230,310 180,280' fill='%23e0a878'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%23ffcfa3' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E">
+          </div>
+          <span class="icon-pick-text">落日黑</span>
+          <span class="icon-pick-check">✓</span>
+        </button>
+
+        <button class="icon-pick-btn" data-icon-type="system">
+          <div class="icon-pick-left">
+            <div style="display: flex; gap: 4px;">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fcfcfa'/%3E%3Cstop offset='100%25' stop-color='%23f5f0ef'/%3E%3C/linearGradient%3E%3ClinearGradient id='platTop' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a8a3b8'/%3E%3Cstop offset='100%25' stop-color='%238c849e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg)'/%3E%3Cellipse cx='256' cy='256' rx='320' ry='120' fill='none' stroke='%23f4a3a3' stroke-width='8' transform='rotate(-35 256 256)' opacity='0.9'/%3E%3Cellipse cx='256' cy='256' rx='300' ry='100' fill='none' stroke='%23fde2e2' stroke-width='3' transform='rotate(-35 256 256)' opacity='0.8'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platTop)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%236b637c' opacity='0.5'/%3E%3Cpolygon points='180,250 230,310 180,280' fill='%231f1a26'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%233e344d' opacity='0.9'/%3E%3C/svg%3E" style="width: 24px; height: 24px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1a1a'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3ClinearGradient id='beam1' x1='50%25' y1='0%25' x2='50%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c98fd6' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%236e3787' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='plat1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236e3787' stop-opacity='0.9'/%3E%3Cstop offset='100%25' stop-color='%232e2338' stop-opacity='0.8'/%3E%3C/linearGradient%3E%3Cfilter id='glow1'%3E%3CfeGaussianBlur stdDeviation='6' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg1)'/%3E%3Cpolygon points='150,-50 350,450 150,450' fill='url(%23beam1)'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23plat1)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%23ffffff' opacity='0.1'/%3E%3Cg filter='url(%23glow1)'%3E%3Cpolygon points='180,250 230,310 180,280' fill='%23e0a878'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%23ffcfa3' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E" style="width: 24px; height: 24px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+            </div>
+          </div>
+          <span class="icon-pick-text">跟随系统</span>
+          <span class="icon-pick-check">✓</span>
+        </button>
+      </div> <!-- 👈 注意这里，图标面板结束 -->
+
+    </div> <!-- 👈 关键：这里闭合了 dropdown-inner -->
+  </div> <!-- 👈 关键：这里闭合了 dropdown 容器 -->
 
 <div id="quoteDisplay" style="transition: opacity 0.8s ease; opacity: 1;">
     <div class="quote-text" id="quoteText">飞鸟还未曾掠过，光里空无一物。</div>
@@ -3335,14 +3448,19 @@ if (!q) {
   function switchPage(containerId, targetPageName, isBack) {
     var container = $(containerId);
     if (!container) return;
-    var oldPage = container.querySelector('.active');
+    
     var newPage = container.querySelector('[data-page="' + targetPageName + '"]');
-    if (!newPage || oldPage === newPage) return;
+    if (!newPage) return;
 
     var pages = container.querySelectorAll('.dropdown-page, .tb-drawer-page');
     for (var i = 0; i < pages.length; i++) {
       pages[i].classList.remove('slide-out-left', 'slide-out-right', 'slide-in-right', 'slide-in-left');
     }
+
+    // 👈 关键修复：严格限定只能查找带 dropdown-page 类的 .active，绝不会抓到内部按钮
+    var oldPage = container.querySelector('.dropdown-page.active') || container.querySelector('.tb-drawer-page.active');
+    
+    if (!oldPage || oldPage === newPage) return;
 
     if (oldPage) {
       oldPage.classList.remove('active');
@@ -3431,6 +3549,54 @@ if (!q) {
     });
   }
 
+  // ===== 应用图标切换逻辑 =====
+  var ICON_SVG_LIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fcfcfa'/%3E%3Cstop offset='100%25' stop-color='%23f5f0ef'/%3E%3C/linearGradient%3E%3ClinearGradient id='platTop' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a8a3b8'/%3E%3Cstop offset='100%25' stop-color='%238c849e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg)'/%3E%3Cellipse cx='256' cy='256' rx='320' ry='120' fill='none' stroke='%23f4a3a3' stroke-width='8' transform='rotate(-35 256 256)' opacity='0.9'/%3E%3Cellipse cx='256' cy='256' rx='300' ry='100' fill='none' stroke='%23fde2e2' stroke-width='3' transform='rotate(-35 256 256)' opacity='0.8'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23platTop)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%236b637c' opacity='0.5'/%3E%3Cpolygon points='180,250 230,310 180,280' fill='%231f1a26'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%233e344d' opacity='0.9'/%3E%3C/svg%3E";
+  var ICON_SVG_DARK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1a1a'/%3E%3Cstop offset='100%25' stop-color='%232e2338'/%3E%3C/linearGradient%3E%3ClinearGradient id='beam1' x1='50%25' y1='0%25' x2='50%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c98fd6' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%236e3787' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='plat1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236e3787' stop-opacity='0.9'/%3E%3Cstop offset='100%25' stop-color='%232e2338' stop-opacity='0.8'/%3E%3C/linearGradient%3E%3Cfilter id='glow1'%3E%3CfeGaussianBlur stdDeviation='6' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bg1)'/%3E%3Cpolygon points='150,-50 350,450 150,450' fill='url(%23beam1)'/%3E%3Cpolygon points='120,380 256,320 392,380 256,440' fill='url(%23plat1)'/%3E%3Cpolygon points='256,320 392,380 256,440' fill='%23ffffff' opacity='0.1'/%3E%3Cg filter='url(%23glow1)'%3E%3Cpolygon points='180,250 230,310 180,280' fill='%23e0a878'/%3E%3Cpolygon points='180,250 130,285 180,280' fill='%23ffcfa3' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E";
+
+  function updateAppIconUI(type) {
+    var btns = document.querySelectorAll('.icon-pick-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-icon-type') === type);
+    }
+  }
+
+  function applyAppIcon(type) {
+    try { localStorage.setItem('haoju_icon_type', type); } catch (e) {}
+
+    // 【关键修复】：清空所有旧的 favicon link（原 HTML 里有 4 个重复的）
+    var allLinks = document.querySelectorAll('link[rel="icon"]');
+    for (var i = 0; i < allLinks.length; i++) {
+      allLinks[i].parentNode.removeChild(allLinks[i]);
+    }
+
+    function createLink(href, media) {
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/svg+xml';
+      link.href = href;
+      if (media) link.media = media;
+      document.head.appendChild(link);
+    }
+
+    if (type === 'light') {
+      createLink(ICON_SVG_LIGHT, null);
+    } else if (type === 'dark') {
+      createLink(ICON_SVG_DARK, null);
+    } else {
+      // 用浏览器原生 media 属性跟随系统，无需 JS 探测
+      createLink(ICON_SVG_LIGHT, '(prefers-color-scheme: light)');
+      createLink(ICON_SVG_DARK, '(prefers-color-scheme: dark)');
+    }
+  }
+
+  function loadAppIcon() {
+    var saved = null;
+    try { saved = localStorage.getItem('haoju_icon_type'); } catch (e) {}
+    if (saved !== 'light' && saved !== 'dark' && saved !== 'system') saved = 'system';
+    applyAppIcon(saved);
+    updateAppIconUI(saved);
+  }
+
   function bindTopbarAndDrawer() {
     $('tbDrawerMask').addEventListener('click', function() {
       if (drawerCurrentPage === 'main') closeDrawer();
@@ -3503,6 +3669,35 @@ if (!q) {
         e.preventDefault();
         e.stopPropagation();
         switchPage('dropdownInner', 'main', true);
+      });
+    }
+
+
+    // ===== 应用图标面板的绑定 =====
+    var menuIconToggle = $('menuIconToggle');
+    if (menuIconToggle) {
+      menuIconToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        switchPage('dropdownInner', 'icon-picker', false);
+      });
+    }
+
+    var iconPickerBack = document.querySelector('.dropdown-page[data-page="icon-picker"] .tb-drawer-back');
+    if (iconPickerBack) {
+      iconPickerBack.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        switchPage('dropdownInner', 'appearance', true);
+      });
+    }
+
+    var iconPickBtns = document.querySelectorAll('.icon-pick-btn');
+    for (var _ip = 0; _ip < iconPickBtns.length; _ip++) {
+      iconPickBtns[_ip].addEventListener('click', function(e) {
+        e.stopPropagation();
+        var type = this.getAttribute('data-icon-type');
+        applyAppIcon(type);
+        updateAppIconUI(type);
       });
     }
 
@@ -4628,6 +4823,7 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
   function init() {
     window.history.replaceState({ page: 'home' }, '');
 
+    loadAppIcon();
     loadQuotes(); loadTheme(); loadLightToggle(); loadAutoSwitch();
 
     var savedMode = localStorage.getItem('haoju_display_mode');
