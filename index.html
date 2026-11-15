@@ -2427,9 +2427,15 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
           <span>切句时换灯位</span>
           <span class="toggle-state" id="lightToggleState">开</span>
         </button>
-        <button id="menuAutoSwitch" class="toggle-item">
+        
+        <button id="menuAutoSwitch" class="dropdown-toggle-item">
           <span>自动换句</span>
-          <span class="toggle-state" id="autoSwitchState">关</span>
+          <span class="tb-drawer-sub"><span class="tb-drawer-value" id="autoSwitchValue">关闭</span><span class="tb-drawer-arrow">›</span></span>
+        </button>
+
+        <button id="menuRandomStart" class="toggle-item">
+          <span>随机开头</span>
+          <span class="toggle-state" id="randomStartState">关</span>
         </button>
         <div id="autoSwitchPanel" style="display: none; padding: 0 16px 12px 28px;">
           <div style="display: flex; gap: 8px; font-size: 13px; color: #aaa; margin-top: 4px;">
@@ -2438,7 +2444,23 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
             <button class="auto-speed-btn" data-time="180000" style="flex: 1; padding: 6px 0; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 6px; color: #aaa; cursor: pointer; font-size: 12px; transition: all 0.2s;">3 分钟</button>
           </div>
         </div>
-      </div> <!-- 👈 注意这里，外观面板结束 -->
+      </div> 
+
+      <!--  自动换句三级面板  -->
+      <div class="dropdown-page" data-page="auto-speed" style="padding-top: 4px;">
+        <button class="tb-drawer-back" data-action="back-auto" aria-label="返回">‹</button>
+        <div class="sub-label">自动换句</div>
+        
+        <button id="btnToggleAuto" class="toggle-item" style="margin-top: 8px;">
+          <span>开启自动换句</span>
+          <span class="toggle-state" id="autoSwitchStateInline">关</span>
+        </button>
+        
+        <div class="sub-label">换句间隔</div>
+        <button class="theme-btn auto-time-btn" data-time="30000">30 秒</button>
+        <button class="theme-btn auto-time-btn" data-time="60000">1 分钟</button>
+        <button class="theme-btn auto-time-btn" data-time="180000">3 分钟</button>
+      </div>
 
       <!-- 3级面板：应用图标 -->
       <div class="dropdown-page" data-page="icon-picker" style="padding-top: 4px;">
@@ -2737,6 +2759,7 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
 
   var quotes = [];
   var currentId = null;
+  var isFirstLaunch = false;
   var editingId = null;
   var importMode = 'merge';
   var bubbleVisible = false;
@@ -2757,6 +2780,8 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
   var batchMode = false;
   var batchSelected = new Set();
   var undoToastTimer = null;
+  var RANDOM_START_KEY = 'haoju_random_start';
+  var randomStartEnabled = false;
 
   // 书架专用状态
   var currentShelfSort = 'recent';
@@ -2779,8 +2804,110 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
     try {
       quotes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (!Array.isArray(quotes)) quotes = [];
+      
+      // 👇 如果本地为空，自动注入 13 条内置精选句子
+      if (quotes.length === 0) {
+        var now = Date.now();
+        quotes = [
+          { 
+            id: uid(), 
+            text: '飞鸟在此栖居，光里偶有回响。', 
+            source: '鸟与光', 
+            tags: ['原创', '自然'], 
+            createdAt: now - 65000 
+          },
+          { 
+            id: uid(), 
+            text: '生如夏花之绚烂，死如秋叶之静美。', 
+            source: '《飞鸟集》', 
+            tags: ['文学', '哲理', '收藏'], 
+            createdAt: now - 60000 
+          },
+          { 
+            id: uid(), 
+            text: '太阳强烈，水波温柔。', 
+            source: '海子', 
+            tags: ['文学', '自然'], 
+            createdAt: now - 55000 
+          },
+          { 
+            id: uid(), 
+            text: '天空没有留下翅膀的痕迹，但我已飞过。', 
+            source: '《飞鸟集》', 
+            tags: ['文学', '自然'], 
+            createdAt: now - 50000 
+          },
+          { 
+            id: uid(), 
+            text: '面对生命进程，我们不乏勇气，而是放手的决心。', 
+            source: '《纪念碑谷2》', 
+            tags: ['哲理', '成长', '收藏'], 
+            createdAt: now - 45000 
+          },
+          { 
+            id: uid(), 
+            text: '你需要的不是大量的行动，而是极大的耐心。', 
+            source: '《纳瓦尔宝典》', 
+            tags: ['哲理', '心境', '成长'], 
+            createdAt: now - 40000 
+          },
+          { 
+            id: uid(), 
+            text: '富有的前提其实是克制。', 
+            source: '《金钱心理学》', 
+            tags: ['哲理', '生活', '心境'], 
+            createdAt: now - 35000 
+          },
+          { 
+            id: uid(), 
+            text: '当事态朝正确的方向发展时，要保持谦逊；当事态朝错误的方向发展时，要心怀谅解或同情。', 
+            source: '《金钱心理学》', 
+            tags: ['哲理', '心境'], 
+            createdAt: now - 30000 
+          },
+          { 
+            id: uid(), 
+            text: '道冲，而用之或不盈。', 
+            source: '《道德经》', 
+            tags: ['哲学', '古文', '自然'], 
+            createdAt: now - 25000 
+          },
+          { 
+            id: uid(), 
+            text: '取之越多，失之越多。', 
+            source: '', 
+            tags: ['哲理', '格言'], 
+            createdAt: now - 20000 
+          },
+          { 
+            id: uid(), 
+            text: '爱是空空的渡船。', 
+            source: '《海浪将我拥起》', 
+            tags: ['文学', '爱'], 
+            createdAt: now - 15000 
+          },
+          { 
+            id: uid(), 
+            text: '群星翻滚成巨浪，涌进我早已开启的窗。', 
+            source: '《海浪将我拥起》', 
+            tags: ['文学', '自然'], 
+            createdAt: now - 10000 
+          },
+          { 
+            id: uid(), 
+            text: '我不再是时间的道具，宇宙将有我的划痕。', 
+            source: '《海浪将我拥起》', 
+            tags: ['哲理', '成长'], 
+            createdAt: now - 5000 
+          }
+        ];
+        saveQuotes(); 
+        isFirstLaunch = true; // 👈 标记为首次启动
+      }
+
     } catch (e) { quotes = []; }
   }
+
   function saveQuotes() { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes)); }
 
   function currentStepIndex() {
@@ -2949,29 +3076,31 @@ function calcFontSize(text) {
 
   // === 自动换句逻辑 ===
   function updateAutoSwitchUI() {
-    var state = $('autoSwitchState');
-    var panel = $('autoSwitchPanel');
-    if (state) {
-      state.textContent = autoSwitchEnabled ? '开' : '关';
-      state.style.color = autoSwitchEnabled ? 'var(--accent-text)' : '#777';
-      state.style.background = autoSwitchEnabled ? 'rgba(var(--accent-rgb), 0.25)' : 'rgba(255,255,255,0.06)';
+    var valEl = $('autoSwitchValue');
+    var stateInline = $('autoSwitchStateInline');
+    
+    // 计算当前时间文字
+    var timeStr = autoSwitchInterval === 30000 ? '30秒' : (autoSwitchInterval === 60000 ? '1分钟' : '3分钟');
+    
+    // 更新外观面板一级入口的状态
+    if (valEl) {
+      valEl.textContent = autoSwitchEnabled ? '开 · ' + timeStr : '关';
     }
-    if (panel) { panel.style.display = autoSwitchEnabled ? 'block' : 'none'; }
-    document.querySelectorAll('.auto-speed-btn').forEach(function(btn) {
+    
+    // 更新自动换句面板内的开关状态
+    if (stateInline) {
+      stateInline.textContent = autoSwitchEnabled ? '开' : '关';
+      stateInline.style.color = autoSwitchEnabled ? 'var(--accent-text)' : '#777';
+      stateInline.style.background = autoSwitchEnabled ? 'rgba(var(--accent-rgb), 0.25)' : 'rgba(255,255,255,0.06)';
+    }
+
+    // 更新时间选择按钮的高亮状态
+    document.querySelectorAll('.auto-time-btn').forEach(function(btn) {
       var t = parseInt(btn.getAttribute('data-time'), 10);
-      if (t === autoSwitchInterval) {
-        btn.style.background = 'rgba(var(--accent-rgb), 0.3)';
-        btn.style.color = 'var(--accent-text)';
-        btn.style.borderColor = 'rgba(var(--accent-rgb), 0.5)';
-        btn.classList.add('active');
-      } else {
-        btn.style.background = 'rgba(255,255,255,0.05)';
-        btn.style.color = '#aaa';
-        btn.style.borderColor = 'transparent';
-        btn.classList.remove('active');
-      }
+      btn.classList.toggle('active', t === autoSwitchInterval);
     });
   }
+
   function startAutoSwitch() {
     stopAutoSwitch();
     if (!autoSwitchEnabled) return;
@@ -3004,6 +3133,24 @@ function calcFontSize(text) {
     else autoSwitchInterval = 30000; // 👈 强制默认 30 秒
     updateAutoSwitchUI();
     if (autoSwitchEnabled) startAutoSwitch();
+  }
+
+  function updateRandomStartUI() {
+    var state = $('randomStartState');
+    if (!state) return;
+    state.textContent = randomStartEnabled ? '开' : '关';
+    state.classList.toggle('off', !randomStartEnabled);
+  }
+  function loadRandomStart() {
+    var saved = localStorage.getItem(RANDOM_START_KEY);
+    randomStartEnabled = (saved === '1');
+    updateRandomStartUI();
+  }
+
+  function toggleRandomStart() {
+    randomStartEnabled = !randomStartEnabled;
+    localStorage.setItem(RANDOM_START_KEY, randomStartEnabled ? '1' : '0');
+    updateRandomStartUI();
   }
 
   function updateFontTicks(idx) {
@@ -3097,8 +3244,29 @@ if (!q) {
 
   function initialRender() {
     if (quotes.length === 0) { resetHistory(null); paintQuote(null); return; }
-    var q = pickRandom(); resetHistory(q.id); currentId = q.id;
-    $('quoteText').textContent = q.text; $('quoteSource').textContent = q.source ? q.source : '';
+    
+    var q;
+    if (!randomStartEnabled) {
+      // 1. 先尝试在库里找原创句
+      q = quotes.find(function(x) { return x.text.indexOf('飞鸟在此栖居') !== -1; });
+      
+      // 2. 如果用户把原创句删了，强行伪造一个显示出来！
+      if (!q) {
+        q = { 
+          id: 'haoju_original_fallback', 
+          text: '飞鸟在此栖居，光里偶有回响。', 
+          source: '鸟与光', 
+          tags: ['原创', '自然'] 
+        };
+      }
+    } else {
+      q = pickRandom(); 
+    }
+
+    resetHistory(q.id); 
+    currentId = q.id;
+    $('quoteText').textContent = q.text; 
+    $('quoteSource').textContent = q.source ? q.source : '';
     document.documentElement.style.setProperty('--quote-size', calcFontSize(q.text) + 'px');
   }
 
@@ -3682,6 +3850,39 @@ if (!q) {
         switchPage('dropdownInner', 'icon-picker', false);
       });
     }
+
+    // 自动换句二级菜单的跳转与内部事件
+    var menuAutoSwitch = $('menuAutoSwitch');
+    if (menuAutoSwitch) {
+      menuAutoSwitch.addEventListener('click', function(e) {
+        e.stopPropagation();
+        switchPage('dropdownInner', 'auto-speed', false);
+      });
+    }
+
+    var autoSpeedBack = document.querySelector('.dropdown-page[data-page="auto-speed"] .tb-drawer-back');
+    if (autoSpeedBack) {
+      autoSpeedBack.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        switchPage('dropdownInner', 'appearance', true);
+      });
+    }
+
+    var btnToggleAuto = $('btnToggleAuto');
+    if (btnToggleAuto) {
+      btnToggleAuto.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleAutoSwitch();
+      });
+    }
+
+    document.querySelectorAll('.auto-time-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setAutoSwitchTime(parseInt(this.getAttribute('data-time'), 10));
+      });
+    });
 
     var iconPickerBack = document.querySelector('.dropdown-page[data-page="icon-picker"] .tb-drawer-back');
     if (iconPickerBack) {
@@ -4482,10 +4683,7 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     $('aboutMask').addEventListener('click', function (e) { if (e.target === $('aboutMask')) $('aboutMask').classList.remove('show'); });
 
     $('menuToggleLight').addEventListener('click', function (e) { e.stopPropagation(); toggleLightToggle(); });
-    $('menuAutoSwitch').addEventListener('click', function(e) { e.stopPropagation(); toggleAutoSwitch(); });
-    document.querySelectorAll('.auto-speed-btn').forEach(function(btn) {
-      btn.addEventListener('click', function(e) { e.stopPropagation(); setAutoSwitchTime(parseInt(this.getAttribute('data-time'), 10)); });
-    });
+    $('menuRandomStart').addEventListener('click', function(e) { e.stopPropagation(); toggleRandomStart(); });
 
     document.querySelectorAll('.theme-btn').forEach(function (b) { b.addEventListener('click', function (e) { e.stopPropagation(); applyTheme(b.getAttribute('data-theme'), false, { x: e.clientX, y: e.clientY }); }); });
     var fontSlider = $('fontSlider'); if (fontSlider) fontSlider.addEventListener('input', function (e) { e.stopPropagation(); applyStepIndex(parseInt(fontSlider.value, 10)); });
@@ -4825,7 +5023,7 @@ function applyStepIndex(idx) { idx = Math.max(0, Math.min(2, idx)); localStorage
     window.history.replaceState({ page: 'home' }, '');
 
     loadAppIcon();
-    loadQuotes(); loadTheme(); loadLightToggle(); loadAutoSwitch();
+    loadQuotes(); loadTheme(); loadLightToggle(); loadAutoSwitch();loadRandomStart(); 
 
     var savedMode = localStorage.getItem('haoju_display_mode');
     if (savedMode === 'clock') {
