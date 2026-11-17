@@ -2354,6 +2354,44 @@ body[data-theme="light"] .icon-pick-btn:hover { background: rgba(0,0,0,0.06); }
   transform: scale(1);
 }
 
+  /* ===== 全局滚动条统一美化 (干掉所有丑陋的默认样式) ===== */
+  
+  /* 针对 Chrome / Edge / Safari 内核 */
+  ::-webkit-scrollbar {
+    width: 6px !important;  /* 滚动条宽度 */
+    height: 6px !important; /* 横向滚动条高度 */
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent !important; /* 轨道完全透明 */
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15) !important; /* 深色模式下的半透明白 */
+    border-radius: 10px !important; /* 圆角滑块 */
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3) !important; /* 鼠标悬停时变亮 */
+  }
+  ::-webkit-scrollbar-button {
+    display: none !important; /* 👈 关键：直接干掉上下两端的丑陋箭头 */
+  }
+
+  /* 晨雾（浅色）模式下的专属适配 */
+  body[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15) !important; /* 浅色模式下换成半透明黑 */
+  }
+  body[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* 针对 Firefox 浏览器的兼容 */
+  * {
+    scrollbar-width: thin; /* 变细 */
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent; /* 滑块颜色 轨道颜色 */
+  }
+  body[data-theme="light"] * {
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  }
+
 </style>
 </head>
 <body data-theme="pink">
